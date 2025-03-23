@@ -346,7 +346,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &541808711
@@ -851,6 +851,7 @@ GameObject:
   - component: {fileID: 1572468459}
   - component: {fileID: 1572468458}
   - component: {fileID: 1572468457}
+  - component: {fileID: 1572468460}
   m_Layer: 5
   m_Name: Button (1)
   m_TagString: Untagged
@@ -921,7 +922,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1572468458}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1572468460}
+        m_TargetAssemblyTypeName: SceneNavigation, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: vehicle_assembly
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1572468458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -960,6 +973,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1572468455}
   m_CullTransparentMesh: 1
+--- !u!114 &1572468460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572468455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a6015d120dad404eb779d2864de2ab6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1768841169
 GameObject:
   m_ObjectHideFlags: 0
