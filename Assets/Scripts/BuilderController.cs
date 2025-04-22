@@ -3,150 +3,149 @@ using System.Collections.Generic;
 
 public class BuilderController : MonoBehaviour
 {
-    // Prefabs for rocket parts
-    public GameObject bottomStagePrefab;
-    public GameObject[] stagePrefabs;     
-    public GameObject[] noseConePrefabs;    
-    public GameObject fins;
-    public GameObject engines;
+    public enum RocketPart { Stage, Nose, Propellant, Control }
 
-    public enum RocketPart
+    [Header("Scene Instances (for manual defaults)")]
+    public GameObject bottomStageInstance;   // drag the scene object here
+
+    [Header("Stage Prefabs")]
+    public GameObject bottomStagePrefab;       // your 1st‑stage model
+    public GameObject[] stagePrefabs;          // [0]=middle‑stage, [1]=top‑stage
+
+    [Header("Nose Cone Prefabs")]
+    public GameObject[] nosePrefabs;           // [0]=ogive, [1]=blunt, [2]=payload
+
+    [Header("Control Prefabs")]
+    private GameObject finsPrefab;
+    private GameObject gimbalPrefab;
+
+    // Tracks current selections
+    private Dictionary<RocketPart,string> currentBuild = new Dictionary<RocketPart,string>();
+
+    // Instantiated GameObjects
+    private GameObject bottomStage, middleStage, topStage, nose, control;
+
+    void Start()
     {
-        Stage,
-        Nose,
-        Propellant,
-        Control
+        // 1) INITIALIZE DEFAULTS
+        currentBuild[RocketPart.Stage]      = "1";
+        currentBuild[RocketPart.Nose]       = "ogive";
+        currentBuild[RocketPart.Propellant] = "solid";
+        currentBuild[RocketPart.Control]    = "fins";
+
+        // Spawn bottom stage
+        // bottomStage = Instantiate(bottomStagePrefab);
+        // bottomStage.transform.SetParent(transform, false);
+        // 1) set up your bottomStage reference
+        bottomStage = bottomStageInstance;
+        // 2) find the anchor transform inside it
+        Transform bottomAnchor = bottomStage.transform.Find("anchor");
+        if (bottomAnchor == null)
+        {
+            Debug.LogError("Could not find an 'anchor' child under bottomStage!");
+            return;
+        }
+        // 3) instantiate the default nose (ogive) at that spot,
+        //    parented under the BuilderController (or leave un‑parented— your choice)
+        nose = Instantiate(
+            nosePrefabs[0],                  // prefab to spawn
+            bottomAnchor.position,           // world‑space pos
+            bottomAnchor.rotation,           // world‑space rot
+            transform                        // parent: this BuilderController
+        );
+
+        // Spawn initial nose & control under the bottom stage
+        // nose = Instantiate(nosePrefabs[0]);
+        // nose.transform.SetParent(bottomStage.transform, false);
+
+        // control = Instantiate(finsPrefab);
+        // control.transform.SetParent(bottomStage.transform, false);
     }
 
-    private Dictionary<RocketPart, string> currentBuild = new Dictionary<RocketPart, string>();
+    // ——— PUBLIC UI CALLS ———
+    public void SelectStage(string s)      => UpdateStage(s);
+    public void SelectNose(string s)       => UpdateNose(s);
+    public void SelectPropellant(string s) => UpdatePropellant(s);
+    public void SelectControl(string s)    => UpdateControl(s);
 
-    public void Start()
+    // ——— CORE LOGIC ———
+    private void UpdateStage(string sel)
     {
-        currentBuild[RocketPart.Stage] = "1";       // 1, 2, 3
-        currentBuild[RocketPart.Nose] = "ogive";      // ogive, blunt, payload
-        currentBuild[RocketPart.Propellant] = "solid"; // solid, liquid
-        currentBuild[RocketPart.Control] = "fins";      // gimbal, fins
+        int count = int.Parse(sel);
+        currentBuild[RocketPart.Stage] = sel;
+
+        // destroy existing
+        if (middleStage != null) Destroy(middleStage);
+        if (topStage    != null) Destroy(topStage);
+
+        // 1→ just bottomStage
+        // 2→ add middleStage at bottomAnchor
+        if (count >= 2)
+        {
+            var bottomAnchor = bottomStage.transform.Find("anchor");
+            middleStage = Instantiate(stagePrefabs[0],
+                                    bottomAnchor.position,
+                                    bottomAnchor.rotation);
+            middleStage.transform.SetParent(transform, true); // flat
+        }
+
+        // 3→ add topStage at middleAnchor
+        if (count >= 3)
+        {
+            var midAnchor = middleStage.transform.Find("anchor");
+            topStage = Instantiate(stagePrefabs[1],
+                                midAnchor.position,
+                                midAnchor.rotation);
+            topStage.transform.SetParent(transform, true);
+        }
+
+        // finally, re‑position your nose up top
+        UpdateNose(currentBuild[RocketPart.Nose]);
     }
 
-    // General update method that delegates based on part type
-    private void UpdateRocket(RocketPart partType, string userSelection)
+    private void UpdateNose(string sel)
     {
-        switch (partType)
-        {
-            case RocketPart.Stage:
-                UpdateStage(userSelection);
-                break;
-            case RocketPart.Nose:
-                UpdateNose(userSelection);
-                break;
-            case RocketPart.Propellant:
-                UpdatePropellant(userSelection);
-                break;
-            case RocketPart.Control:
-                UpdateControl(userSelection);
-                break;
-        }
-    }
+        int idx = sel == "ogive" ? 0 : sel == "blunt" ? 1 : 2;
+        if (nose != null) Destroy(nose);
 
-    //
-    // Update methods for each category
-    //
+        // pick the right anchor
+        Transform anchor;
+        int stageCount = int.Parse(currentBuild[RocketPart.Stage]);
+        if      (stageCount >= 3 && topStage    != null) anchor = topStage   .transform.Find("anchor");
+        else if (stageCount >= 2 && middleStage != null) anchor = middleStage.transform.Find("anchor");
+        else                                             anchor = bottomStage.transform.Find("anchor");
 
-    private void UpdateStage(string selection)
-    {
-        if (selection == "1")
-        {
-            // Remove middle and top stage (if present)
-            // Bring nose to bottom stage connection point
-            Debug.Log("Selected Stage configuration 1: Removing extra stages and using bottom stage only.");
-        }
-        else if (selection == "2")
-        {
-            // Remove top stage (if present)
-            // Add middle stage (if not present)
-            // Attach nose cone and bottom stage appropriately
-            Debug.Log("Selected Stage configuration 2: Adding middle stage.");
-        }
-        else if (selection == "3")
-        {
-            // Add top stage
-            // Attach nose cone and attach to middle stage (if not already)
-            Debug.Log("Selected Stage configuration 3: Adding top stage.");
-        }
-    }
-
-    private void UpdateNose(string selection)
-    {
-        // Options: "ogive", "blunt", "payload"
-        // Destroy current nose and replace with the appropriate prefab.
-        if (selection == "ogive")
-        {
-            Debug.Log("Replacing nose with ogive prefab.");
-            // Instantiate the ogive nose prefab and position it
-        }
-        else if (selection == "blunt")
-        {
-            Debug.Log("Replacing nose with blunt prefab.");
-            // Instantiate the blunt nose prefab and position it
-        }
-        else // assume payload
-        {
-            Debug.Log("Replacing nose with payload prefab.");
-            // Instantiate the payload nose prefab and position it
-        }
+        nose = Instantiate(nosePrefabs[idx],
+                        anchor.position,
+                        anchor.rotation);
+        nose.transform.SetParent(transform, true);  // flat again
     }
 
     private void UpdatePropellant(string selection)
     {
-        // Options: "solid", "liquid"
-        if (selection == "liquid")
+        if (selection != "solid" && selection != "liquid")
         {
-            Debug.Log("Showing liquid propellant image.");
+            Debug.LogError($"Invalid propellant selection: {selection}");
+            return;
         }
-        else
-        {
-            Debug.Log("Showing solid propellant image.");
-        }
+        currentBuild[RocketPart.Propellant] = selection;
+        Debug.Log($"Propellant set to: {selection}");
+        // TODO: hook up any visual/particle changes here
     }
 
     private void UpdateControl(string selection)
     {
-        // Options: "gimbal", "fins"
-        if (selection == "gimbal")
-        {
-            Debug.Log("Selecting gimbal control: hiding fins and starting engine animation.");
-        }
-        else
-        {
-            Debug.Log("Selecting fins control: showing fins and stopping engine animation.");
-        }
-    }
+        // if (selection != "fins" && selection != "gimbal")
+        // {
+        //     Debug.LogError($"Invalid control selection: {selection}");
+        //     return;
+        // }
+        // currentBuild[RocketPart.Control] = selection;
 
-    //
-    // Public methods for UI to call for each selection
-    //
-
-    public void SelectStages(string userSelection)
-    {
-        currentBuild[RocketPart.Stage] = userSelection;
-        UpdateRocket(RocketPart.Stage, userSelection);
-    }
-
-    public void SelectNose(string userSelection)
-    {
-        currentBuild[RocketPart.Nose] = userSelection;
-        UpdateRocket(RocketPart.Nose, userSelection);
-    }
-
-    public void SelectPropellant(string userSelection)
-    {
-        currentBuild[RocketPart.Propellant] = userSelection;
-        UpdateRocket(RocketPart.Propellant, userSelection);
-    }
-
-    public void SelectControl(string userSelection)
-    {
-        currentBuild[RocketPart.Control] = userSelection;
-        UpdateRocket(RocketPart.Control, userSelection);
+        // // Swap control visuals
+        // if (control != null) Destroy(control);
+        // GameObject prefab = (selection == "fins") ? finsPrefab : gimbalPrefab;
+        // control = Instantiate(prefab);
+        // control.transform.SetParent(bottomStage.transform, false);
     }
 }
