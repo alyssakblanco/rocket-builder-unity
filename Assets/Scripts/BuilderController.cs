@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; 
 using System.Collections.Generic;
 
 public class BuilderController : MonoBehaviour
@@ -15,6 +16,9 @@ public class BuilderController : MonoBehaviour
     [Header("Nose Cone Prefabs")]
     public GameObject[] nosePrefabs;           // [0]=ogive, [1]=blunt, [2]=payload
 
+    [Header("Camera")]
+    public Camera mainCamera;           // [0]=ogive, [1]=blunt, [2]=payload
+
     [Header("Control Prefabs")]
     private GameObject finsPrefab;
     private GameObject gimbalPrefab;
@@ -25,6 +29,8 @@ public class BuilderController : MonoBehaviour
     // Instantiated GameObjects
     private GameObject bottomStage, middleStage, topStage, nose, control;
 
+    private float cameraMoveSpeed = 50f;
+
     void Start()
     {
         // 1) INITIALIZE DEFAULTS
@@ -34,8 +40,6 @@ public class BuilderController : MonoBehaviour
         currentBuild[RocketPart.Control]    = "fins";
 
         // Spawn bottom stage
-        // bottomStage = Instantiate(bottomStagePrefab);
-        // bottomStage.transform.SetParent(transform, false);
         // 1) set up your bottomStage reference
         bottomStage = bottomStageInstance;
         // 2) find the anchor transform inside it
@@ -53,13 +57,6 @@ public class BuilderController : MonoBehaviour
             bottomAnchor.rotation,           // world‑space rot
             transform                        // parent: this BuilderController
         );
-
-        // Spawn initial nose & control under the bottom stage
-        // nose = Instantiate(nosePrefabs[0]);
-        // nose.transform.SetParent(bottomStage.transform, false);
-
-        // control = Instantiate(finsPrefab);
-        // control.transform.SetParent(bottomStage.transform, false);
     }
 
     // ——— PUBLIC UI CALLS ———
@@ -68,11 +65,39 @@ public class BuilderController : MonoBehaviour
     public void SelectPropellant(string s) => UpdatePropellant(s);
     public void SelectControl(string s)    => UpdateControl(s);
 
+    // CAMEREA CONTROL
+    IEnumerator MoveCamera(int stages)
+    {
+        Vector3 targetPosition;
+
+        if(stages == 3){
+            targetPosition = new Vector3(-17.45f, 9.68f, -24.33f);
+        }else if(stages == 2){
+            targetPosition = new Vector3(-15.25f, 8.3f, -21.38f);
+        }else{
+            targetPosition = new Vector3(-13.7f, 6.74f, -18.11f);
+        }
+
+
+        while (Vector3.Distance(mainCamera.transform.position, targetPosition) > 0.01f)
+        {
+            mainCamera.transform.position = Vector3.MoveTowards(
+                mainCamera.transform.position,
+                targetPosition,
+                cameraMoveSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+        mainCamera.transform.position = targetPosition;
+    }
+
     // ——— CORE LOGIC ———
     private void UpdateStage(string sel)
     {
         int count = int.Parse(sel);
         currentBuild[RocketPart.Stage] = sel;
+
+        StartCoroutine(MoveCamera(count));
 
         // destroy existing
         if (middleStage != null) Destroy(middleStage);
