@@ -3565,6 +3565,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8240b154758e910468a43c351c5b63c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rocketMappings:
+  - rocketName: f_9
+    rocketPrefab: {fileID: 9087931371161690677, guid: 7bd1fc99b5b001e439031498bc7f7ca2, type: 3}
+  - rocketName: f_heavy
+    rocketPrefab: {fileID: 6863372587379040227, guid: 9b84e28bba36d98449e8feafb1fb6b8e, type: 3}
+  - rocketName: saturn
+    rocketPrefab: {fileID: 7056999421873789322, guid: 401f2804ec26e8840877ae9e08e402fc, type: 3}
+  - rocketName: v2
+    rocketPrefab: {fileID: 8573944196530607687, guid: 8cd4c26a9b207cb44962ff8cc1b44a9e, type: 3}
 --- !u!1 &1762617526
 GameObject:
   m_ObjectHideFlags: 0

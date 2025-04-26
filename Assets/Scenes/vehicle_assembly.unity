@@ -2770,7 +2770,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 507793419}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1292462066}
+        m_TargetAssemblyTypeName: HomeButton, Assembly-CSharp
+        m_MethodName: ReturnHome
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &507793419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3424,8 +3436,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Yes, Return Home
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
+  m_sharedMaterial: {fileID: 6830117976034122533, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3560,8 +3572,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Do you want to leave the builder?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8969289229269634d8336eab9b541ac8, type: 2}
+  m_sharedMaterial: {fileID: 8370255131002969245, guid: 8969289229269634d8336eab9b541ac8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6024,7 +6036,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1223792204}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1292462066}
+        m_TargetAssemblyTypeName: HomeButton, Assembly-CSharp
+        m_MethodName: HideHomeModal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1223792204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6455,6 +6479,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1292462064}
   - component: {fileID: 1292462065}
+  - component: {fileID: 1292462066}
   m_Layer: 0
   m_Name: BuilderController
   m_TagString: Untagged
@@ -6499,6 +6524,19 @@ MonoBehaviour:
   - {fileID: 6575560219177267191, guid: 9a07db7dd1af0fa4d96a1adc8ba586b9, type: 3}
   - {fileID: 136150129233109278, guid: d87692ca047222d4d85757660f5ff56a, type: 3}
   mainCamera: {fileID: 1768841171}
+--- !u!114 &1292462066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292462062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c4ba4a57a727a24f8abcf62d1bdbd13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  homeModal: {fileID: 2057942987}
 --- !u!1 &1330748803
 GameObject:
   m_ObjectHideFlags: 0
@@ -9044,8 +9082,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Your progress will not be saved.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8969289229269634d8336eab9b541ac8, type: 2}
+  m_sharedMaterial: {fileID: 8370255131002969245, guid: 8969289229269634d8336eab9b541ac8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9180,8 +9218,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: No, Keep Building
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
+  m_sharedMaterial: {fileID: 6830117976034122533, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9502,7 +9540,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1927605015}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1292462066}
+        m_TargetAssemblyTypeName: HomeButton, Assembly-CSharp
+        m_MethodName: ShowHomeModal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1927605015
 MonoBehaviour:
   m_ObjectHideFlags: 0
