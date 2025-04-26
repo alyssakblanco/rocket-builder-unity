@@ -91,6 +91,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: payload_nose
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c2baf0368563e1f4e9de2f0e9d098c53, type: 3}
+      propertyPath: m_TagString
+      value: NoseCone
+      objectReference: {fileID: 0}
     - target: {fileID: 4020907425115009252, guid: c2baf0368563e1f4e9de2f0e9d098c53, type: 3}
       propertyPath: m_Name
       value: fairing_half_l
@@ -103,6 +107,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 77dd203f682ce0f4fa833a5e9483757c, type: 2}
+    - target: {fileID: 6076282502621517318, guid: c2baf0368563e1f4e9de2f0e9d098c53, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 658011e70f338bd42838e8f8b873abdd, type: 2}
+    - target: {fileID: 9092433622134618354, guid: c2baf0368563e1f4e9de2f0e9d098c53, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 658011e70f338bd42838e8f8b873abdd, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

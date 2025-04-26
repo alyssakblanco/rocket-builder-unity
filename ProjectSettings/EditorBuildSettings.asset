@@ -14,6 +14,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/vehicle_assembly.unity
     guid: 988f331e7dc16494a9de95986c3442df
+  - enabled: 1
+    path: Assets/Scenes/rocket_garden.unity
+    guid: cc580a6aef8f58a41a5ea87841fabe40
+  - enabled: 1
+    path: Assets/Scenes/mission_select.unity
+    guid: fea7180efa991b04ead608f578dc4e89
+  - enabled: 1
+    path: Assets/Scenes/launch_pad.unity
+    guid: 0815adf5b7943cc4ca38eb7e6c69b877
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

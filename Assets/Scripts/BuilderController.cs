@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections; 
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class BuilderController : MonoBehaviour
 {
@@ -160,17 +161,40 @@ public class BuilderController : MonoBehaviour
 
     private void UpdateControl(string selection)
     {
-        // if (selection != "fins" && selection != "gimbal")
-        // {
-        //     Debug.LogError($"Invalid control selection: {selection}");
-        //     return;
-        // }
-        // currentBuild[RocketPart.Control] = selection;
+        if (selection != "fins" && selection != "gimbal")
+        {
+            Debug.LogError($"Invalid control selection: {selection}");
+            return;
+        }
+        currentBuild[RocketPart.Control] = selection;
 
-        // // Swap control visuals
-        // if (control != null) Destroy(control);
-        // GameObject prefab = (selection == "fins") ? finsPrefab : gimbalPrefab;
-        // control = Instantiate(prefab);
-        // control.transform.SetParent(bottomStage.transform, false);
+        // Swap control visuals
+        if (control != null) Destroy(control);
+        GameObject prefab = (selection == "fins") ? finsPrefab : gimbalPrefab;
+        control = Instantiate(prefab);
+        control.transform.SetParent(bottomStage.transform, false);
+    }
+
+    // LAUNCH PAD PREP
+    public void AssembleRocket()
+    {
+        Transform bottom = GameObject.FindWithTag("BottomStage")?.transform;
+        Transform middle = GameObject.FindWithTag("MiddleStage")?.transform;
+        Transform top    = GameObject.FindWithTag("TopStage")?.transform;
+        Transform nose   = GameObject.FindWithTag("NoseCone")?.transform;
+
+        var rocket = new GameObject("Rocket");
+        bottom.SetParent(rocket.transform, true);
+        if (middle != null) middle.SetParent(rocket.transform, true);
+        if (top    != null) top.SetParent(rocket.transform, true);
+        if (nose   != null) nose.SetParent(rocket.transform, true);
+        
+        DontDestroyOnLoad(rocket);
+    }
+
+    public void GoToLaunchPad()
+    {
+        AssembleRocket();
+        SceneManager.LoadScene("launch_pad");
     }
 }

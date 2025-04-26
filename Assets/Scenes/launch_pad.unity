@@ -2883,8 +2883,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: LAUNCH
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
+  m_sharedMaterial: {fileID: 6830117976034122533, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3521,6 +3521,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1620911744}
   m_CullTransparentMesh: 1
+--- !u!1 &1701233014
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1701233015}
+  - component: {fileID: 1701233016}
+  m_Layer: 0
+  m_Name: RocketLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1701233015
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701233014}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 427.7404, y: 119.93381, z: -138.66695}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1701233016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701233014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8240b154758e910468a43c351c5b63c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1762617526
 GameObject:
   m_ObjectHideFlags: 0
@@ -4335,63 +4379,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2050023684}
   m_Mesh: {fileID: -4292748679198835856, guid: b656d8f39f656cd4b84ac49154916e0e, type: 3}
---- !u!1001 &2074362634
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 584.2727
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 13.200001
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 444.71622
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.8826292
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.000000019290571
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.47006992
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.000000010273723
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 56.078
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
-      propertyPath: m_Name
-      value: Saturn V
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: fb338c4ca9f4ff44bb475d8a42d79a29, type: 3}
 --- !u!1 &2104804327
 GameObject:
   m_ObjectHideFlags: 0
@@ -4803,6 +4790,6 @@ SceneRoots:
   - {fileID: 335746678}
   - {fileID: 802839233}
   - {fileID: 1117623960}
-  - {fileID: 2074362634}
   - {fileID: 1268427867}
   - {fileID: 3954146536845611607}
+  - {fileID: 1701233015}

@@ -9,11 +9,11 @@ public class CameraAscend : MonoBehaviour
 
     void Update()
     {
-        if (ascending && transform.position.y < targetHeight)
-        {
-            Vector3 newPos = transform.position;
-            newPos.y += ascendSpeed * Time.deltaTime;
-            transform.position = newPos;
-        }
+        // if (ascending && transform.position.y < targetHeight)
+        // {
+        //     Vector3 newPos = transform.position;
+        //     newPos.y += ascendSpeed * Time.deltaTime;
+        //     transform.position = newPos;
+        // }
     }
 }
