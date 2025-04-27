@@ -15,6 +15,8 @@ public class RocketInfo
 
 public class RG_ButtonNav : MonoBehaviour
 {
+    public GameObject mainCanvas;
+
     private string rocketToShow;
     public TextMeshProUGUI nameTextUI;
     public TextMeshProUGUI bodyTextUI;
@@ -24,7 +26,7 @@ public class RG_ButtonNav : MonoBehaviour
     private int currentIndex = 0;
 
     public Camera mainCamera; // Assign in Inspector
-    private float cameraMoveSpeed = 50f; // Adjustable speed
+    public float cameraMoveSpeed; // Adjustable speed
 
     private string rocketName;
 
@@ -49,19 +51,19 @@ public class RG_ButtonNav : MonoBehaviour
             },
             new RocketInfo
             {
-                code = "saturn",
-                name = "Saturn V",
+                code = "f_heavy",
+                name = "Falcon Heavy",
                 body = @"
-<b>Country of origin:</b> USA – NASA
-<b>Years in use:</b> 1967 - 1973
-<b>Number of stages:</b> 3
-<b>Mission:</b> Apollo Program – human exploration of the Moon
+<b>Country of origin:</b> USA – SpaceX
+<b>Years in use:</b> 2018 - today
+<b>Number of stages:</b> 2.5
+<b>Used for:</b> Carry cargo into Earth orbit and beyond
 
 <b>Fun facts:</b>
-• The only launch vehicle to have carried humans beyond low Earth orbit (LEO)
+• Composed of three reusable Falcon 9 nine-engine cores together generating more than 5 million pounds of thrust at liftoff, equal to approximately eighteen 747 aircraft!
 
-• Used for nine crewed flights to the Moon and to launch Skylab (the first American space station).",
-                cameraPosition = new Vector3(-89.7f, 59.5f, 163.7f)
+• Falcon Heavy is called a ""2.5-stage rocket"" because its side boosters drop off first while the center core keeps firing, making it feel like a bonus half stage before the second stage takes over.",
+                cameraPosition = new Vector3(37.7f, 38.4f, 119.3f)
             },
             new RocketInfo
             {
@@ -81,19 +83,19 @@ public class RG_ButtonNav : MonoBehaviour
             },
             new RocketInfo
             {
-                code = "f_heavy",
-                name = "Falcon Heavy",
+                code = "saturn",
+                name = "Saturn V",
                 body = @"
-<b>Country of origin:</b> USA – SpaceX
-<b>Years in use:</b> 2018 - today
-<b>Number of stages:</b> 2.5
-<b>Used for:</b> Carry cargo into Earth orbit and beyond
+<b>Country of origin:</b> USA – NASA
+<b>Years in use:</b> 1967 - 1973
+<b>Number of stages:</b> 3
+<b>Mission:</b> Apollo Program – human exploration of the Moon
 
 <b>Fun facts:</b>
-• Composed of three reusable Falcon 9 nine-engine cores together generating more than 5 million pounds of thrust at liftoff, equal to approximately eighteen 747 aircraft!
+• The only launch vehicle to have carried humans beyond low Earth orbit (LEO)
 
-• Falcon Heavy is called a ""2.5-stage rocket"" because its side boosters drop off first while the center core keeps firing, making it feel like a bonus half stage before the second stage takes over.",
-                cameraPosition = new Vector3(37.7f, 38.4f, 119.3f)
+• Used for nine crewed flights to the Moon and to launch Skylab (the first American space station).",
+                cameraPosition = new Vector3(-89.7f, 59.5f, 163.7f)
             }
         };
 
@@ -109,7 +111,26 @@ public class RG_ButtonNav : MonoBehaviour
 
         // Initialize with the first rocket
         rocketToShow = rocketOrder[currentIndex];
-        NavigateToRocket();
+        StartCoroutine(InitialRoutine());
+    }
+
+    private IEnumerator InitialRoutine()
+    {
+        yield return StartCoroutine(InitalSceneSetup(rocketInfoDict[rocketToShow]));
+    }
+    
+    private IEnumerator InitalSceneSetup(RocketInfo rocket)
+    {
+        // 1) update text immediately
+        nameTextUI.text = rocket.name;
+        bodyTextUI.text = rocket.body;
+
+        // 2) wait until camera has moved into position
+        yield return StartCoroutine(MoveCamera(rocket.cameraPosition, 50));
+
+        // 3) only now activate the canvas (once!)
+        if (!mainCanvas.activeSelf)
+            mainCanvas.SetActive(true);
     }
 
     public void NavigateToRocket()
@@ -122,22 +143,21 @@ public class RG_ButtonNav : MonoBehaviour
 
             // Move camera smoothly
             StopAllCoroutines(); // Stop any existing movement coroutine
-            StartCoroutine(MoveCamera(rocket.cameraPosition));
+            StartCoroutine(MoveCamera(rocket.cameraPosition, cameraMoveSpeed));
         }
-        else
-        {
-            Debug.LogWarning($"Rocket code '{rocketToShow}' not found!");
+        if (!mainCanvas.active){
+            mainCanvas.SetActive(true);
         }
     }
 
-    IEnumerator MoveCamera(Vector3 targetPosition)
+    IEnumerator MoveCamera(Vector3 targetPosition, float moveSpeed)
     {
         while (Vector3.Distance(mainCamera.transform.position, targetPosition) > 0.01f)
         {
             mainCamera.transform.position = Vector3.MoveTowards(
                 mainCamera.transform.position,
                 targetPosition,
-                cameraMoveSpeed * Time.deltaTime
+                moveSpeed * Time.deltaTime
             );
             yield return null;
         }
@@ -166,7 +186,6 @@ public class RG_ButtonNav : MonoBehaviour
 
     public void MoveToLaunch()
     {
-        Debug.LogWarning($"rocketToShow {rocketToShow}");
         RocketSelection.SelectedRocketName = rocketToShow;
         SceneManager.LoadScene("launch_pad");
     }

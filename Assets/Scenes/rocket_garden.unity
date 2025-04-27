@@ -610,7 +610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &335746675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2955,9 +2955,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2194b2b8d24520c46a008ecafe6be0b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCanvas: {fileID: 335746674}
   nameTextUI: {fileID: 1149899481}
   bodyTextUI: {fileID: 637709625}
   mainCamera: {fileID: 1768841171}
+  cameraMoveSpeed: 300
 --- !u!4 &1580589054
 Transform:
   m_ObjectHideFlags: 0
