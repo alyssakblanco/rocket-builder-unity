@@ -15,13 +15,16 @@ public class RocketLoader : MonoBehaviour
 
     private Vector3 spawnPosition;
     private Vector3 spawnEulerAngles; 
+    private Vector3 spawnScale;
 
     void Awake()
     {
         string choice = RocketSelection.SelectedRocketName;
+        Debug.LogWarning($"choice {choice} ");
         
         if (string.IsNullOrEmpty(choice))
         {
+            Debug.LogWarning($"GETTING HERE");
             // IMPORTING BUILD YOUR OWN
             GameObject rocket = GameObject.Find("Rocket");
             if (rocket != null)
@@ -33,33 +36,54 @@ public class RocketLoader : MonoBehaviour
                 // Match the inspector’s uniform scale of 4.8832
                 rocket.transform.localScale = new Vector3(4.8832f, 4.8832f, 4.8832f);
             }
+            return;
         }
 
-        if (choice == "f_9"){
-            spawnPosition = new Vector3(593.1f, 12.5f, 443.8f);
-            spawnEulerAngles = new Vector3(0f,   180f,  0f); 
-        }else if (choice == "f_heavy"){
-            spawnPosition = new Vector3(593.1f, 12.5f, 443.8f);
-            spawnEulerAngles = new Vector3(0f,   180f,  0f); 
-        }else if (choice == "saturn"){
-            spawnPosition = new Vector3(583.1f, 12.5f, 443.8f);
-            spawnEulerAngles = new Vector3(0f,   180f,  0f); 
-        }else if (choice == "v2"){
-            spawnPosition = new Vector3(593.1f, 12.5f, 443.8f);
-            spawnEulerAngles = new Vector3(0f,   180f,  0f); 
+        switch (choice)
+        {
+            case "f_9":
+                spawnPosition    = new Vector3(584.4f,  13.2f, 444.07f);
+                spawnEulerAngles = new Vector3(0f, 142.7f, 0f);
+                spawnScale       = Vector3.one * 136.77f;
+                break;
+
+            case "f_heavy":
+                spawnPosition    = new Vector3(613f,  83.3f, 480f);
+                spawnEulerAngles = new Vector3(0f, 0f, 0f);
+                spawnScale       = Vector3.one * 0.3f;
+                break;
+
+            case "saturn":
+                spawnPosition    = new Vector3(584.2f, 14.4f, 447f);
+                spawnEulerAngles = new Vector3(0f, 00f, 0f);
+                spawnScale       = Vector3.one * 1.01f;
+                break;
+
+            case "v2":
+                spawnPosition    = new Vector3(586.13f, 34f, 441.64f);
+                spawnEulerAngles = new Vector3(-90f, 0f, -35.3f);
+                spawnScale       = Vector3.one * 3.03f;
+                break;
+
+            default:
+                Debug.LogWarning($"Unknown rocket choice: {choice}");
+                return;
         }
 
         // find its prefab
         var entry = rocketMappings.FirstOrDefault(e => e.rocketName == choice);
-
-        Quaternion spawnRotation = Quaternion.Euler(spawnEulerAngles);
-        // instantiate at the spawn point
-        Instantiate(entry.rocketPrefab, spawnPosition, spawnRotation);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        if (entry.rocketPrefab == null)
+        {
+            Debug.LogError($"No prefab assigned for rocketName '{choice}' in your Inspector!");
+            return;
+        }
         
+        // instantiate at the spawn point
+        GameObject rocketInstance = Instantiate(
+            entry.rocketPrefab, 
+            spawnPosition, 
+            Quaternion.Euler(spawnEulerAngles)
+        );
+        rocketInstance.transform.localScale = spawnScale;
     }
 }

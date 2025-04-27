@@ -3567,13 +3567,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rocketMappings:
   - rocketName: f_9
-    rocketPrefab: {fileID: 9087931371161690677, guid: 7bd1fc99b5b001e439031498bc7f7ca2, type: 3}
+    rocketPrefab: {fileID: 4192913303951404544, guid: 381e7e90d407bf143ac00ff86e23912e, type: 3}
   - rocketName: f_heavy
-    rocketPrefab: {fileID: 6863372587379040227, guid: 9b84e28bba36d98449e8feafb1fb6b8e, type: 3}
+    rocketPrefab: {fileID: 8461831843633009843, guid: 54070c9f2ce25034b9b0f16b81b195af, type: 3}
   - rocketName: saturn
-    rocketPrefab: {fileID: 7056999421873789322, guid: 401f2804ec26e8840877ae9e08e402fc, type: 3}
+    rocketPrefab: {fileID: 3462960824092694552, guid: f2d03df2d768ea94cb7f86dd4d80c743, type: 3}
   - rocketName: v2
-    rocketPrefab: {fileID: 8573944196530607687, guid: 8cd4c26a9b207cb44962ff8cc1b44a9e, type: 3}
+    rocketPrefab: {fileID: 348638896763006269, guid: 793b1848133bdd0418f4bc190cc13485, type: 3}
 --- !u!1 &1762617526
 GameObject:
   m_ObjectHideFlags: 0
@@ -3755,7 +3755,7 @@ Transform:
   m_GameObject: {fileID: 1768841169}
   serializedVersion: 2
   m_LocalRotation: {x: 0.004601196, y: 0.9882543, z: 0.030375455, w: 0.14969826}
-  m_LocalPosition: {x: 592.5, y: 60.1, z: 554.2}
+  m_LocalPosition: {x: 598.6, y: 62.1, z: 562.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3817,11 +3817,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 686182a6ca430ea44ae2aee422c4c738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ascendSpeed: 10
-  targetHeight: 500
-  skyRenderer: {fileID: 0}
-  fadeStartHeight: 100
-  fadeEndHeight: 500
 --- !u!1 &1792070620
 GameObject:
   m_ObjectHideFlags: 0

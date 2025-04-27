@@ -186,6 +186,7 @@ public class RG_ButtonNav : MonoBehaviour
 
     public void MoveToLaunch()
     {
+        Debug.LogWarning($"rocketToShow {rocketToShow} ");
         RocketSelection.SelectedRocketName = rocketToShow;
         SceneManager.LoadScene("launch_pad");
     }
