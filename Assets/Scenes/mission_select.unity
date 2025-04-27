@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: c56e28e54cac24b04ae3dd957d214534, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 7c79b0cb2ecdd104e8afe8869884ef61, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -201,7 +201,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 84499402}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1485980711}
+        m_TargetAssemblyTypeName: MissionControl, Assembly-CSharp
+        m_MethodName: MissionSelection
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 0
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &84499402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1112,7 +1124,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 638354625}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1485980711}
+        m_TargetAssemblyTypeName: MissionControl, Assembly-CSharp
+        m_MethodName: MissionSelection
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: planet
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &638354625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1520,7 +1544,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1227553088
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1685,6 +1709,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1431165839}
   m_CullTransparentMesh: 1
+--- !u!1 &1485980710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1485980712}
+  - component: {fileID: 1485980711}
+  m_Layer: 0
+  m_Name: MissionController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1485980711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485980710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bc30f22254a77c418aacc8c23158e39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1485980712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485980710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 698.88403, y: 637.0537, z: -45.921417}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1512984851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1903,7 +1971,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1525297862}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1485980711}
+        m_TargetAssemblyTypeName: MissionControl, Assembly-CSharp
+        m_MethodName: MissionSelection
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 1
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1525297862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1954,6 +2034,7 @@ GameObject:
   - component: {fileID: 1768841171}
   - component: {fileID: 1768841170}
   - component: {fileID: 1768841173}
+  - component: {fileID: 1768841174}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2028,13 +2109,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1768841169}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.34521413, y: -0, z: -0, w: 0.938524}
   m_LocalPosition: {x: -1, y: -0, z: -54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -40.39, y: 0, z: 0}
 --- !u!114 &1768841173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2079,6 +2160,22 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &1768841174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768841169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e6fa2983f16f4341ae476ff4f92d60e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amplitude: 0
+  frequency: 0
+  noiseSpeed: 0.01
+  noiseStrength: 20
 --- !u!1 &1889945499
 GameObject:
   m_ObjectHideFlags: 0
@@ -2209,3 +2306,4 @@ SceneRoots:
   - {fileID: 1889945502}
   - {fileID: 335746678}
   - {fileID: 1227553091}
+  - {fileID: 1485980712}

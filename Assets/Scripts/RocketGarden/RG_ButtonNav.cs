@@ -145,7 +145,7 @@ public class RG_ButtonNav : MonoBehaviour
             StopAllCoroutines(); // Stop any existing movement coroutine
             StartCoroutine(MoveCamera(rocket.cameraPosition, cameraMoveSpeed));
         }
-        if (!mainCanvas.active){
+        if (!mainCanvas.activeSelf){
             mainCanvas.SetActive(true);
         }
     }
