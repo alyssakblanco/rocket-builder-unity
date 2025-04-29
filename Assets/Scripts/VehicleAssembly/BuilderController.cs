@@ -1,7 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections; 
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+
+public enum RocketPart
+{
+    Stage,
+    Nose,
+    Propellant,
+    Control
+}
 
 public class BuilderController : MonoBehaviour
 {
@@ -20,17 +29,32 @@ public class BuilderController : MonoBehaviour
     [Header("Camera")]
     public Camera mainCamera;           // [0]=ogive, [1]=blunt, [2]=payload
 
+    // propellant images
+    public Image propellantImage; // Drag your UI Image component here in the Inspector
+    public Sprite solidPropellantSprite; // Drag your "solid" sprite here
+    public Sprite liquidPropellantSprite; // Drag your "liquid" sprite here
+
     [Header("Control Prefabs")]
-    private GameObject finsPrefab;
-    private GameObject gimbalPrefab;
+    public GameObject finsPrefab;
+    public GameObject gimbalPrefab;
 
     // Tracks current selections
     private Dictionary<RocketPart,string> currentBuild = new Dictionary<RocketPart,string>();
+    public Dictionary<RocketPart, string> GetCurrentBuild()
+    {
+        return currentBuild;
+    }
 
     // Instantiated GameObjects
     private GameObject bottomStage, middleStage, topStage, nose, control;
 
     private float cameraMoveSpeed = 50f;
+
+    // gimbal animation
+    private bool gimbalShouldSwing = false;
+    public float swingSpeed = 50f;
+    public float swingAngle = 10f;
+    private float swingTimer = 0f;
 
     void Start()
     {
@@ -58,6 +82,18 @@ public class BuilderController : MonoBehaviour
             bottomAnchor.rotation,           // world‑space rot
             transform                        // parent: this BuilderController
         );
+
+        propellantImage.sprite = solidPropellantSprite;
+    }
+
+    void Update()
+    {
+        if (gimbalShouldSwing && gimbalPrefab != null)
+        {
+            swingTimer += Time.deltaTime * swingSpeed;
+            float z = Mathf.Sin(swingTimer) * swingAngle;
+            gimbalPrefab.transform.localRotation = Quaternion.Euler(0f, 0f, z);
+        }
     }
 
     // ——— PUBLIC UI CALLS ———
@@ -67,7 +103,7 @@ public class BuilderController : MonoBehaviour
     public void SelectControl(string s)    => UpdateControl(s);
 
     // CAMEREA CONTROL
-    IEnumerator MoveCamera(int stages)
+    public IEnumerator MoveCamera(int stages)
     {
         Vector3 targetPosition;
 
@@ -78,7 +114,6 @@ public class BuilderController : MonoBehaviour
         }else{
             targetPosition = new Vector3(-13.7f, 6.74f, -18.11f);
         }
-
 
         while (Vector3.Distance(mainCamera.transform.position, targetPosition) > 0.01f)
         {
@@ -131,6 +166,7 @@ public class BuilderController : MonoBehaviour
 
     private void UpdateNose(string sel)
     {
+        currentBuild[RocketPart.Nose] = sel;
         int idx = sel == "ogive" ? 0 : sel == "blunt" ? 1 : 2;
         if (nose != null) Destroy(nose);
 
@@ -156,23 +192,40 @@ public class BuilderController : MonoBehaviour
         }
         currentBuild[RocketPart.Propellant] = selection;
         Debug.Log($"Propellant set to: {selection}");
-        // TODO: hook up any visual/particle changes here
+        
+        // Update the propellant image
+        if (propellantImage != null)
+        {
+            if (selection == "solid" && solidPropellantSprite != null)
+            {
+                propellantImage.sprite = solidPropellantSprite;
+            }
+            else if (selection == "liquid" && liquidPropellantSprite != null)
+            {
+                propellantImage.sprite = liquidPropellantSprite;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Propellant image is not assigned.");
+        }
     }
 
     private void UpdateControl(string selection)
     {
-        if (selection != "fins" && selection != "gimbal")
-        {
-            Debug.LogError($"Invalid control selection: {selection}");
-            return;
-        }
         currentBuild[RocketPart.Control] = selection;
 
-        // Swap control visuals
-        if (control != null) Destroy(control);
-        GameObject prefab = (selection == "fins") ? finsPrefab : gimbalPrefab;
-        control = Instantiate(prefab);
-        control.transform.SetParent(bottomStage.transform, false);
+        // Toggle fins
+        finsPrefab.SetActive(selection == "fins");
+
+        // Control gimbal animation state
+        gimbalShouldSwing = (selection == "gimbal");
+
+        // Reset gimbal to neutral position if it's not supposed to swing
+        if (!gimbalShouldSwing && gimbalPrefab != null)
+        {
+            gimbalPrefab.transform.localRotation = Quaternion.identity;
+        }
     }
 
     // LAUNCH PAD PREP

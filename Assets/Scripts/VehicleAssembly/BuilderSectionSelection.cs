@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections; 
+using System.Collections.Generic;
 
 public class BuilderSectionSelection : MonoBehaviour
 {
@@ -15,12 +17,33 @@ public class BuilderSectionSelection : MonoBehaviour
     public Button controlButton;
     public Button stagesButton;
 
+    // camera
+    public Camera mainCamera;
+    private float cameraMoveSpeed = 50f;
+
     // Colors for active/inactive
     private readonly Color activeColor = Color.white;
     private readonly Color inactiveColor = Color.gray;
 
+    private BuilderController builderController;
+    void Awake()
+    {
+        builderController = FindFirstObjectByType<BuilderController>();
+    }
+
     public void SetCurrentSection(string selection)
     {
+        if (builderController != null)
+        {
+            var currentBuild = builderController.GetCurrentBuild(); // if you made a getter
+            Debug.Log(currentBuild[BuilderController.RocketPart.Propellant]);
+        }
+        else
+        {
+            Debug.LogError("BuilderController not found!");
+        }
+
+        
         // turn off all sections
         noseSection.SetActive(false);
         propellantSection.SetActive(false);
@@ -34,12 +57,15 @@ public class BuilderSectionSelection : MonoBehaviour
                 noseSection.SetActive(true);
                 break;
             case "Propellant":
+                StartCoroutine(MoveCamera(1));
                 propellantSection.SetActive(true);
                 break;
             case "Control":
+                StartCoroutine(MoveCamera(1));
                 controlSection.SetActive(true);
                 break;
             case "Stages":
+                // StartCoroutine(MoveCamera(currentBuild[BuilderController.RocketPart.Stage]));
                 stagesSection.SetActive(true);
                 break;
             default:
@@ -48,6 +74,31 @@ public class BuilderSectionSelection : MonoBehaviour
         }
 
         UpdateButtonColors(selection);
+    }
+
+    // CAMEREA CONTROL
+    public IEnumerator MoveCamera(int stages)
+    {
+        Vector3 targetPosition;
+
+        if(stages == 3){
+            targetPosition = new Vector3(-17.45f, 9.68f, -24.33f);
+        }else if(stages == 2){
+            targetPosition = new Vector3(-15.25f, 8.3f, -21.38f);
+        }else{
+            targetPosition = new Vector3(-13.7f, 6.74f, -18.11f);
+        }
+
+        while (Vector3.Distance(mainCamera.transform.position, targetPosition) > 0.01f)
+        {
+            mainCamera.transform.position = Vector3.MoveTowards(
+                mainCamera.transform.position,
+                targetPosition,
+                cameraMoveSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+        mainCamera.transform.position = targetPosition;
     }
 
     private void UpdateButtonColors(string activeSelection)

@@ -12,6 +12,7 @@ public class RocketLoader : MonoBehaviour
 {
     [Tooltip("Fill this with name-to-prefab pairs in the inspector")]
     public RocketEntry[] rocketMappings;
+    public GameObject parentObject;
 
     private Vector3 spawnPosition;
     private Vector3 spawnEulerAngles; 
@@ -20,11 +21,10 @@ public class RocketLoader : MonoBehaviour
     void Awake()
     {
         string choice = RocketSelection.SelectedRocketName;
-        Debug.LogWarning($"choice {choice} ");
         
+        // USE CUSTOM ROCKET
         if (string.IsNullOrEmpty(choice))
         {
-            Debug.LogWarning($"GETTING HERE");
             // IMPORTING BUILD YOUR OWN
             GameObject rocket = GameObject.Find("Rocket");
             if (rocket != null)
@@ -35,10 +35,12 @@ public class RocketLoader : MonoBehaviour
                 rocket.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                 // Match the inspector’s uniform scale of 4.8832
                 rocket.transform.localScale = new Vector3(4.8832f, 4.8832f, 4.8832f);
+                rocket.transform.SetParent(parentObject.transform);
             }
-            return;
+            choice = "saturn";
         }
 
+        // USE PRE BUILT ROCKET
         switch (choice)
         {
             case "f_9":
@@ -84,6 +86,7 @@ public class RocketLoader : MonoBehaviour
             spawnPosition, 
             Quaternion.Euler(spawnEulerAngles)
         );
+        rocketInstance.transform.SetParent(parentObject.transform);
         rocketInstance.transform.localScale = spawnScale;
     }
 }
