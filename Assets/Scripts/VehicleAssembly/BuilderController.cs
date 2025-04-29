@@ -4,14 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public enum RocketPart
-{
-    Stage,
-    Nose,
-    Propellant,
-    Control
-}
-
 public class BuilderController : MonoBehaviour
 {
     public enum RocketPart { Stage, Nose, Propellant, Control }

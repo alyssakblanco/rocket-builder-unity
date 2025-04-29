@@ -25,25 +25,28 @@ public class BuilderSectionSelection : MonoBehaviour
     private readonly Color activeColor = Color.white;
     private readonly Color inactiveColor = Color.gray;
 
-    private BuilderController builderController;
+    // builder controller
+    [SerializeField] private GameObject targetObject;
+    private BuilderController _builderController;
     void Awake()
     {
-        builderController = FindFirstObjectByType<BuilderController>();
+        _builderController = targetObject.GetComponent<BuilderController>();
+        if (_builderController == null)
+            Debug.LogError("No BuilderController on " + targetObject.name);
     }
 
     public void SetCurrentSection(string selection)
     {
-        if (builderController != null)
+        var build = _builderController.GetCurrentBuild();
+        if (build.TryGetValue(BuilderController.RocketPart.Stage, out var stage))
         {
-            var currentBuild = builderController.GetCurrentBuild(); // if you made a getter
-            Debug.Log(currentBuild[BuilderController.RocketPart.Propellant]);
+            Debug.Log("Current Stage selection: " + stage);
         }
         else
         {
-            Debug.LogError("BuilderController not found!");
+            Debug.LogWarning("Stage not set yet.");
         }
 
-        
         // turn off all sections
         noseSection.SetActive(false);
         propellantSection.SetActive(false);
@@ -57,33 +60,31 @@ public class BuilderSectionSelection : MonoBehaviour
                 noseSection.SetActive(true);
                 break;
             case "Propellant":
-                StartCoroutine(MoveCamera(1));
+                StartCoroutine(MoveCamera("1"));
                 propellantSection.SetActive(true);
                 break;
             case "Control":
-                StartCoroutine(MoveCamera(1));
+                StartCoroutine(MoveCamera("1"));
                 controlSection.SetActive(true);
                 break;
             case "Stages":
-                // StartCoroutine(MoveCamera(currentBuild[BuilderController.RocketPart.Stage]));
+                StartCoroutine(MoveCamera(stage));
                 stagesSection.SetActive(true);
                 break;
             default:
                 Debug.LogWarning($"[SectionController] Unknown section «{selection}»");
                 break;
         }
-
-        UpdateButtonColors(selection);
     }
 
     // CAMEREA CONTROL
-    public IEnumerator MoveCamera(int stages)
+    public IEnumerator MoveCamera(string stages)
     {
         Vector3 targetPosition;
 
-        if(stages == 3){
+        if(stages == "3"){
             targetPosition = new Vector3(-17.45f, 9.68f, -24.33f);
-        }else if(stages == 2){
+        }else if(stages == "2"){
             targetPosition = new Vector3(-15.25f, 8.3f, -21.38f);
         }else{
             targetPosition = new Vector3(-13.7f, 6.74f, -18.11f);
@@ -99,14 +100,5 @@ public class BuilderSectionSelection : MonoBehaviour
             yield return null;
         }
         mainCamera.transform.position = targetPosition;
-    }
-
-    private void UpdateButtonColors(string activeSelection)
-    {
-        // Get each button’s Image and set its color based on whether it’s the active one
-        noseButton.image.color        = (activeSelection == "Nose")      ? activeColor : inactiveColor;
-        propellantButton.image.color  = (activeSelection == "Propellant")? activeColor : inactiveColor;
-        controlButton.image.color     = (activeSelection == "Control")   ? activeColor : inactiveColor;
-        stagesButton.image.color      = (activeSelection == "Stages")    ? activeColor : inactiveColor;
     }
 }
