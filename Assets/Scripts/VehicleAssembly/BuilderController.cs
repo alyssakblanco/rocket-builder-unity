@@ -285,6 +285,7 @@ public class BuilderController : MonoBehaviour
     public void GoToLaunchPad()
     {
         AssembleRocket();
+        RocketSelection.SelectedRocketName = null;
         SceneManager.LoadScene("launch_pad");
     }
 
