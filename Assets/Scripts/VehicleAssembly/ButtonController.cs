@@ -1,4 +1,3 @@
-// Assets/Scripts/VehicleAssembly/StatefulButton.cs
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -52,7 +51,6 @@ namespace VehicleAssembly
         void OnButtonClicked(Button[] buttons, int selectedIndex)
         {
             UpdateGroupVisuals(buttons, selectedIndex);
-            // TODO: Call your domain logic here, e.g. UpdateNose(selectedIndex.ToString())
         }
 
         void UpdateGroupVisuals(Button[] buttons, int activeIndex)

@@ -3,12 +3,39 @@ using UnityEngine.UI;
 using System.Collections; 
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class BuilderController : MonoBehaviour
 {
     public enum RocketPart { Stage, Nose, Propellant, Control }
 
-    [Header("Scene Instances (for manual defaults)")]
+    public static readonly string[] NoseCones = new[]
+    {
+        "A smooth, pointed design—like the tip of a sharpened pencil. It slices through the air with very little resistance, helping your rocket go faster and fly straight.",
+        "A rounded, dome-like tip. It’s tougher against heat but makes more air push against it, so the rocket slows down a bit more.",
+        "A cover that protects equipment or satellites. During flight, it can open or split apart to let the cargo pop out. It usually looks like a cone or a modified cone shape."
+    };
+
+    public static readonly string[] Propellants = new[]
+    {
+        "Fuel and oxidizer stay in liquid form until they reach the engine. Pumps push them in, so you can throttle the engine up or down. This is great if you need to adjust speed or turn in space.",
+        "Fuel and oxidizer are mixed into one solid block. You light it once, and it burns until it’s gone. It delivers a quick, powerful push—perfect for fast launches—but you can’t turn it off or change its power level."
+    };
+
+    public static readonly string[] Controls = new[]
+    {
+        "The entire engine can tilt back and forth, like swiveling a garden hose. By pointing the thrust a little left or right, you change the rocket’s direction. Works both inside the atmosphere and in space.",
+        "Rocket fins help keep your rocket steady in flight by keeping it pointed in the right direction and on the right path—but because they need air to push against, they don’t work once the rocket reaches the vacuum of space."
+    };
+
+    public static readonly string[] Stages = new[]
+    {
+        "All in one piece—engine, fuel, and payload stay together. Usually used for short, suborbital trips (it goes up and comes right back down).",
+        "The first stage blasts off and then falls away; the second stage takes over to reach orbit. This is the kind that can put satellites around Earth.",
+        "After the second stage drops off, a third stage fires to push the rocket beyond Earth orbit. It’s powerful enough to head toward the Moon or travel to other planets."
+    };
+
+    [Header("Bottom Stage")]
     public GameObject bottomStageInstance;   // drag the scene object here
 
     [Header("Stage Prefabs")]
@@ -47,6 +74,20 @@ public class BuilderController : MonoBehaviour
     public float swingSpeed = 50f;
     public float swingAngle = 10f;
     private float swingTimer = 0f;
+
+    [Header("UI Content")]
+    public TextMeshProUGUI noseDesc;
+    public TextMeshProUGUI propellantDesc;
+    public TextMeshProUGUI controlDesc;
+    public TextMeshProUGUI stagesDesc;
+    public TextMeshProUGUI noseTitle;
+    public TextMeshProUGUI propellantTitle;
+    public TextMeshProUGUI controlTitle;
+    public TextMeshProUGUI stagesTitle;
+    public TextMeshProUGUI noseHeader;
+    public TextMeshProUGUI propellantHeader;
+    public TextMeshProUGUI controlHeader;
+    public TextMeshProUGUI stagesHeader;
 
     void Start()
     {
@@ -122,6 +163,7 @@ public class BuilderController : MonoBehaviour
     // ——— CORE LOGIC ———
     private void UpdateStage(string sel)
     {
+        UpdateContent("stages", sel);
         int count = int.Parse(sel);
         currentBuild[RocketPart.Stage] = sel;
 
@@ -158,6 +200,7 @@ public class BuilderController : MonoBehaviour
 
     private void UpdateNose(string sel)
     {
+        UpdateContent("nose", sel);
         currentBuild[RocketPart.Nose] = sel;
         int idx = sel == "ogive" ? 0 : sel == "blunt" ? 1 : 2;
         if (nose != null) Destroy(nose);
@@ -177,6 +220,7 @@ public class BuilderController : MonoBehaviour
 
     private void UpdatePropellant(string selection)
     {
+        UpdateContent("propellant", selection);
         if (selection != "solid" && selection != "liquid")
         {
             Debug.LogError($"Invalid propellant selection: {selection}");
@@ -205,6 +249,7 @@ public class BuilderController : MonoBehaviour
 
     private void UpdateControl(string selection)
     {
+        UpdateContent("control", selection);
         currentBuild[RocketPart.Control] = selection;
 
         // Toggle fins
@@ -241,5 +286,67 @@ public class BuilderController : MonoBehaviour
     {
         AssembleRocket();
         SceneManager.LoadScene("launch_pad");
+    }
+
+    // UI Control
+    public void UpdateContent(string section, string sel){
+        if(section == "nose"){
+            if(sel == "ogive"){
+                noseTitle.text = "Ogive";
+                noseHeader.text = "Ogive";
+                noseDesc.text = NoseCones[0];
+            }
+            if(sel == "blunt"){
+                noseTitle.text = "Blunt";
+                noseHeader.text = "Blunt";
+                noseDesc.text = NoseCones[1];
+            }
+            if(sel == "payload"){
+                noseTitle.text = "Payload";
+                noseHeader.text = "Payload";
+                noseDesc.text = NoseCones[2];
+            }
+        }
+        if(section == "propellant"){
+            if(sel == "solid"){
+                propellantTitle.text = "Solid";
+                propellantHeader.text = "Solid";
+                propellantDesc.text = Propellants[0];
+            }
+            if(sel == "liquid"){
+                propellantTitle.text = "Liquid";
+                propellantHeader.text = "Liquid";
+                propellantDesc.text = Propellants[1];
+            }
+        }
+        if(section == "control"){
+            if(sel == "fins"){
+                controlTitle.text = "Movable Fins";
+                controlHeader.text = "Movable Fins";
+                controlDesc.text = Controls[0];
+            }
+            if(sel == "gimbal"){
+                controlTitle.text = "Gimbaled Engines";
+                controlHeader.text = "Gimbaled Engines";
+                controlDesc.text = Controls[1];
+            }
+        }
+        if(section == "stages"){
+            if(sel == "1"){
+                stagesTitle.text = "One Stage";
+                stagesHeader.text = "One Stage";
+                stagesDesc.text = Stages[0];
+            }
+            if(sel == "2"){
+                stagesTitle.text = "Two Stages";
+                stagesHeader.text = "Two Stages";
+                stagesDesc.text = Stages[1];
+            }
+            if(sel == "3"){
+                stagesTitle.text = "Three Stages";
+                stagesHeader.text = "Three Stages";
+                stagesDesc.text = Stages[2];
+            }
+        }
     }
 }

@@ -8057,6 +8057,18 @@ MonoBehaviour:
   gimbalPrefab: {fileID: 434704149}
   swingSpeed: 3
   swingAngle: 10
+  noseDesc: {fileID: 1277957328}
+  propellantDesc: {fileID: 1360662536}
+  controlDesc: {fileID: 1521418872}
+  stagesDesc: {fileID: 326400296}
+  noseTitle: {fileID: 1291993206}
+  propellantTitle: {fileID: 923222330}
+  controlTitle: {fileID: 1556935562}
+  stagesTitle: {fileID: 1388114253}
+  noseHeader: {fileID: 775056887}
+  propellantHeader: {fileID: 1333370843}
+  controlHeader: {fileID: 328277013}
+  stagesHeader: {fileID: 265623578}
 --- !u!114 &1292462066
 MonoBehaviour:
   m_ObjectHideFlags: 0
