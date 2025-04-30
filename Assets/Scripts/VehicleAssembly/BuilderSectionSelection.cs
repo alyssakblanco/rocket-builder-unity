@@ -68,6 +68,7 @@ public class BuilderSectionSelection : MonoBehaviour
         switch (selection)
         {
             case "Nose":
+                StartCoroutine(MoveCamera(stage));
                 UpdateGroupVisuals(0);
                 noseSection.SetActive(true);
                 break;

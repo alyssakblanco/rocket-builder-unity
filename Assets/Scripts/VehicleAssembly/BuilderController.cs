@@ -18,14 +18,14 @@ public class BuilderController : MonoBehaviour
 
     public static readonly string[] Propellants = new[]
     {
+        "Fuel and oxidizer are mixed into one solid block. You light it once, and it burns until it’s gone. It delivers a quick, powerful push—perfect for fast launches—but you can’t turn it off or change its power level.",        
         "Fuel and oxidizer stay in liquid form until they reach the engine. Pumps push them in, so you can throttle the engine up or down. This is great if you need to adjust speed or turn in space.",
-        "Fuel and oxidizer are mixed into one solid block. You light it once, and it burns until it’s gone. It delivers a quick, powerful push—perfect for fast launches—but you can’t turn it off or change its power level."
     };
 
     public static readonly string[] Controls = new[]
     {
+        "Rocket fins help keep your rocket steady in flight by keeping it pointed in the right direction and on the right path—but because they need air to push against, they don’t work once the rocket reaches the vacuum of space.",
         "The entire engine can tilt back and forth, like swiveling a garden hose. By pointing the thrust a little left or right, you change the rocket’s direction. Works both inside the atmosphere and in space.",
-        "Rocket fins help keep your rocket steady in flight by keeping it pointed in the right direction and on the right path—but because they need air to push against, they don’t work once the rocket reaches the vacuum of space."
     };
 
     public static readonly string[] Stages = new[]
@@ -333,17 +333,17 @@ public class BuilderController : MonoBehaviour
         }
         if(section == "stages"){
             if(sel == "1"){
-                stagesTitle.text = "One Stage";
+                stagesTitle.text = "1";
                 stagesHeader.text = "One Stage";
                 stagesDesc.text = Stages[0];
             }
             if(sel == "2"){
-                stagesTitle.text = "Two Stages";
+                stagesTitle.text = "2";
                 stagesHeader.text = "Two Stages";
                 stagesDesc.text = Stages[1];
             }
             if(sel == "3"){
-                stagesTitle.text = "Three Stages";
+                stagesTitle.text = "3";
                 stagesHeader.text = "Three Stages";
                 stagesDesc.text = Stages[2];
             }

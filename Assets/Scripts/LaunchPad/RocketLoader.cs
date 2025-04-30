@@ -36,8 +36,9 @@ public class RocketLoader : MonoBehaviour
                 // Match the inspector’s uniform scale of 4.8832
                 rocket.transform.localScale = new Vector3(4.8832f, 4.8832f, 4.8832f);
                 rocket.transform.SetParent(parentObject.transform);
+            }else{
+                choice = "saturn";
             }
-            choice = "saturn";
         }
 
         // USE PRE BUILT ROCKET
