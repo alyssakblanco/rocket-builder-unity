@@ -17,13 +17,15 @@ public class BuilderSectionSelection : MonoBehaviour
     public Button controlButton;
     public Button stagesButton;
 
+    private Button[] sectionButtons;
+
     // camera
     public Camera mainCamera;
     private float cameraMoveSpeed = 50f;
 
     // Colors for active/inactive
     private readonly Color activeColor = Color.white;
-    private readonly Color inactiveColor = Color.gray;
+    private readonly Color inactiveColor = new Color(0.75f, 0.75f, 0.75f);
 
     // builder controller
     [SerializeField] private GameObject targetObject;
@@ -33,6 +35,15 @@ public class BuilderSectionSelection : MonoBehaviour
         _builderController = targetObject.GetComponent<BuilderController>();
         if (_builderController == null)
             Debug.LogError("No BuilderController on " + targetObject.name);
+
+        sectionButtons = new Button[] {
+            noseButton,
+            propellantButton,
+            controlButton,
+            stagesButton
+        };
+
+        UpdateGroupVisuals(0);
     }
 
     public void SetCurrentSection(string selection)
@@ -57,17 +68,21 @@ public class BuilderSectionSelection : MonoBehaviour
         switch (selection)
         {
             case "Nose":
+                UpdateGroupVisuals(0);
                 noseSection.SetActive(true);
                 break;
             case "Propellant":
+                UpdateGroupVisuals(1);
                 StartCoroutine(MoveCamera("1"));
                 propellantSection.SetActive(true);
                 break;
             case "Control":
+                UpdateGroupVisuals(2);
                 StartCoroutine(MoveCamera("1"));
                 controlSection.SetActive(true);
                 break;
             case "Stages":
+                UpdateGroupVisuals(3);
                 StartCoroutine(MoveCamera(stage));
                 stagesSection.SetActive(true);
                 break;
@@ -101,4 +116,15 @@ public class BuilderSectionSelection : MonoBehaviour
         }
         mainCamera.transform.position = targetPosition;
     }
+
+    // update button colors
+    void UpdateGroupVisuals(int activeIndex)
+        {
+            for (int i = 0; i < sectionButtons.Length; i++)
+            {
+                var img = sectionButtons[i].GetComponent<Image>();
+                if (img != null)
+                    img.color = (i == activeIndex ? activeColor : inactiveColor);
+            }
+        }
 }
