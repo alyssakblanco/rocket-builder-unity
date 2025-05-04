@@ -4,53 +4,39 @@ using System.Collections;
 [RequireComponent(typeof(Camera))]
 public class LaunchControl : MonoBehaviour
 {
-    [Header("Flight Settings")]
-    [Tooltip("Height at which skybox is enabled and ascent stops")]
-    public float disableHeight;
-    [Tooltip("Ascent speed (units/sec)")]
+
+    public float orbitalAltitude;
     public float ascentSpeed;
-
-    [Header("Rotation Settings")]
-    [Tooltip("Initial upward tilt (degrees)")]
     public Vector3 initialTilt;
-    [Tooltip("Tilt-down offset when reaching disableHeight (degrees)")]
     public Vector3 tiltDownOffset;
-    [Tooltip("Spin speed around Y axis after disableHeight (°/sec)")]
-    public float spinSpeed;
-
-    [Header("Camera & Environment")]
-    public Camera launchThing;
     public Gradient backgroundGradient;
     public GameObject groundSet;
     public Color skyColor;
-
     public GameObject launchCanvas;
+    public GameObject launchViewer;
+    public Camera mainCamera;
+    public GameObject[] objectsToActivate;
+    public float delayBetween = 0.5f;
 
     private Camera _cam;
-    private bool _hasReachedDisableHeight = false;
+    private bool _hasReachedorbitalAltitude = false;
 
     void Awake()
     {
-        _cam = launchThing;
+        _cam = mainCamera;
         _cam.clearFlags = CameraClearFlags.SolidColor;
         _cam.backgroundColor = skyColor;
     }
 
-    /// <summary>
-    /// Call this from your UI button (OnClick → LaunchControl.StartLaunch)
-    /// </summary>
     public void StartLaunch()
     {
-        launchCanvas.SetActive(false);
+        objectsToActivate[0].SetActive(false);
         // reset state if you want to allow re-launching
-        _hasReachedDisableHeight = false;
+        _hasReachedorbitalAltitude = false;
         StartCoroutine(RotateRoutine(initialTilt));  // initial tilt
         StartCoroutine(LaunchSequence());
     }
 
-    /// <summary>
-    /// Drives ascent, gradient update, threshold-triggered tilt & spin.
-    /// </summary>
     private IEnumerator LaunchSequence()
     {
         while (true)
@@ -58,25 +44,24 @@ public class LaunchControl : MonoBehaviour
             float y = transform.position.y;
 
             // 1) Ascend until threshold
-            if (!_hasReachedDisableHeight)
+            if (!_hasReachedorbitalAltitude)
                 transform.Translate(Vector3.up * ascentSpeed * Time.deltaTime, Space.Self);
 
-            // 2) On first crossing of disableHeight
-            if (!_hasReachedDisableHeight && y >= disableHeight)
+            // 2) On first crossing of orbitalAltitude
+            if (!_hasReachedorbitalAltitude && y >= orbitalAltitude)
             {
-                _hasReachedDisableHeight = true;
+                _hasReachedorbitalAltitude = true;
                 groundSet.SetActive(false);
                 _cam.clearFlags = CameraClearFlags.Skybox;
 
                 // tilt down, then start spinning
-                StartCoroutine(RotateRoutine(tiltDownOffset));
-                StartCoroutine(SpinYAxis());
+                // StartCoroutine(RotateRoutine(tiltDownOffset));
             }
 
             // 3) While below threshold, update sky gradient
-            if (!_hasReachedDisableHeight)
+            if (!_hasReachedorbitalAltitude)
             {
-                float t = Mathf.Clamp01(y / disableHeight);
+                float t = Mathf.Clamp01(y / orbitalAltitude);
                 _cam.backgroundColor = backgroundGradient.Evaluate(t);
             }
 
@@ -97,17 +82,71 @@ public class LaunchControl : MonoBehaviour
             transform.rotation = Quaternion.Slerp(start, end, elapsed / duration);
             yield return null;
         }
-
         transform.rotation = end;
     }
 
-    // Continuous Y-axis spin
-    private IEnumerator SpinYAxis()
+    // LAUNCH setup
+    public void SetupLaunch()
     {
-        while (true)
+        launchCanvas.SetActive(false);
+        StartCoroutine(MoveCamera(new Vector3(554f, 73f, 560f), 50));
+        StartCoroutine(ActivateSequence());
+    }
+
+    IEnumerator MoveCamera(Vector3 targetPosition, float moveSpeed)
+    {
+        while (Vector3.Distance(mainCamera.transform.position, targetPosition) > 0.01f)
         {
-            transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime, Space.Self);
+            mainCamera.transform.position = Vector3.MoveTowards(
+                mainCamera.transform.position,
+                targetPosition,
+                moveSpeed * Time.deltaTime
+            );
             yield return null;
         }
+        mainCamera.transform.position = targetPosition;
+    }
+
+    private IEnumerator ActivateSequence()
+    {
+        for (int i = 0; i < objectsToActivate.Length; i++)
+        {
+            if(i == 1){
+                objectsToActivate[1].SetActive(true);
+                StartCoroutine(DoShake());
+                objectsToActivate[2].SetActive(true);
+            }else if(i == 2){
+                Invoke(nameof(StartLaunch), 2f);
+            }
+            else{
+                objectsToActivate[i].SetActive(true);
+            }
+            yield return new WaitForSeconds(delayBetween);
+        }
+    }
+
+
+    public float shakeDuration = 2f;
+    public float shakeMagnitude = 0.1f;
+    private IEnumerator DoShake()
+    {
+        // Cache the original local position so we can reset
+        Vector3 originalPos = mainCamera.transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < shakeDuration)
+        {
+            // Pick a random point inside a unit circle for X and Y
+            Vector2 offset = Random.insideUnitCircle * shakeMagnitude;
+            
+            // Apply to localPosition (so it respects any parent transform)
+            mainCamera.transform.localPosition = originalPos + new Vector3(offset.x, offset.y, 0f);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Restore exact original position
+        mainCamera.transform.localPosition = originalPos;
     }
 }

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6b0b362bf3dcd427990d60d7490e838b
+timeCreated: 1457650952
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 58504
+  packageName: Realistic Smoke VFX
+  packageVersion: 1.6
+  assetPath: Assets/Luke Peek/Realistic Smoke/Materials/Smoke.mat
+  uploadId: 424922
