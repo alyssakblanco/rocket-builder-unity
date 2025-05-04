@@ -35,7 +35,7 @@ public class LaunchControl : MonoBehaviour
         _cam.backgroundColor = skyColor;
         
     }
-// -80, 68
+
     void Start(){
         rocket = GameObject.FindWithTag("Rocket");
     }
@@ -124,6 +124,39 @@ public class LaunchControl : MonoBehaviour
         mainCamera.transform.rotation = end;
     }
 
+    private IEnumerator RotateObject(GameObject thing, Vector3 eulerOffset, float duration = 5f)
+    {
+        Quaternion start = thing.transform.rotation;
+        Quaternion end   = start * Quaternion.Euler(eulerOffset);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            thing.transform.rotation = Quaternion.Slerp(start, end, elapsed / duration);
+            yield return null;
+        }
+        thing.transform.rotation = end;
+    }
+
+    private IEnumerator RotateToEuler(Transform  thing, Vector3 targetEuler, float duration = 5f)
+    {
+        // if you want to respect parent orientation, use localRotation;
+        // otherwise swap Local↔World as needed
+        Quaternion start = thing.transform.localRotation;
+        Quaternion end   = Quaternion.Euler(targetEuler);
+        float elapsed    = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            thing.transform.localRotation = Quaternion.Slerp(start, end, t);
+            yield return null;
+        }
+        thing.transform.localRotation = end;
+    }
+
     // LAUNCH setup
     public void SetupLaunch()
     {
@@ -146,6 +179,20 @@ public class LaunchControl : MonoBehaviour
         mainCamera.transform.position = targetPosition;
     }
 
+    IEnumerator MoveObject(Transform thing, Vector3 targetPosition, float moveSpeed)
+    {
+        while (Vector3.Distance(thing.transform.position, targetPosition) > 0.01f)
+        {
+            thing.transform.position = Vector3.MoveTowards(
+                thing.transform.position,
+                targetPosition,
+                moveSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+        thing.transform.position = targetPosition;
+    }
+
     IEnumerator MoveCameraLocal(Vector3 targetLocalPos, float moveSpeed)
     {
         // move its localPosition instead of world position
@@ -159,6 +206,21 @@ public class LaunchControl : MonoBehaviour
             yield return null;
         }
         mainCamera.transform.localPosition = targetLocalPos;
+    }
+
+    IEnumerator MoveObjectLocal(GameObject thing, Vector3 targetLocalPos, float moveSpeed)
+    {
+        // move its localPosition instead of world position
+        while (Vector3.Distance(thing.transform.localPosition, targetLocalPos) > 0.01f)
+        {
+            thing.transform.localPosition = Vector3.MoveTowards(
+                thing.transform.localPosition,
+                targetLocalPos,
+                moveSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+        thing.transform.localPosition = targetLocalPos;
     }
 
     private IEnumerator ActivateSequence()
@@ -207,9 +269,19 @@ public class LaunchControl : MonoBehaviour
     public IEnumerator EndSequence(){
         // activate earth
         earth.SetActive(true);
+        // move up earth
+        // start at -623 -1613 -1035
+        StartCoroutine(MoveObject(earth.transform, new Vector3(-1106f, -501f, -1035), 10f));
         // turn rocket
-        // StartCoroutine(MoveCamera(new Vector3(-343f, -21f, 117f), 10f));
-        // StartCoroutine(RotateCamera(new Vector3(26f, 78f, 65f), 10f));
+
+        // turn camera
+        StartCoroutine(MoveCameraLocal(new Vector3(-154f, 12f, -120f), 10f));
+        StartCoroutine(RotateToEuler(mainCamera.transform, new Vector3(-10f, 32f, 0f), 10f));
+
+        StartCoroutine(RotateToEuler(rocket.transform, new Vector3(303.617889f,223.776978f,308.639282f), 10f));
+        StartCoroutine(MoveObjectLocal(rocket, new Vector3(182.129501f,-23.6542969f,32.101059f), 10f));
+        
+
         // kill burn 
         objectsToActivate[1].SetActive(false);
         // hide altitude
@@ -220,3 +292,7 @@ public class LaunchControl : MonoBehaviour
         yield return null;
     }
 }
+        // StartCoroutine(RotateToEuler(rocket.transform, new Vector3(0f, 36f, -52f), 10f));
+        // StartCoroutine(MoveObjectLocal(rocket, new Vector3(70f, 0f, 0f), 10f));
+        // StartCoroutine(MoveCameraLocal(new Vector3(-255f, 116f, -203f), 10f));
+        // StartCoroutine(RotateToEuler(mainCamera.transform, new Vector3(0f, 23f, 0f), 10f));
