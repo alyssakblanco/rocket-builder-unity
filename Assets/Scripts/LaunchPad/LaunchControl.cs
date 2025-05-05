@@ -5,61 +5,71 @@ using TMPro;
 [RequireComponent(typeof(Camera))]
 public class LaunchControl : MonoBehaviour
 {
+    [Header("Flight Settings")]
+    public float OrbitalAltitude = 1000f;
+    public float AscentSpeed = 10f;
+    public Vector3 InitialTilt = Vector3.zero;
+    public Gradient BackgroundGradient;
+    public Color SkyColor;
 
-    public float orbitalAltitude;
-    public float ascentSpeed;
-    public Vector3 initialTilt;
-    public Vector3 tiltDownOffset;
-    public Gradient backgroundGradient;
-    public GameObject groundSet;
-    public Color skyColor;
-    public GameObject launchCanvas;
-    public GameObject launchViewer;
-    public Camera mainCamera;
-    public GameObject[] objectsToActivate;
-    public float delayBetween = 0.5f;
-    public TextMeshProUGUI heightText;
-    public GameObject inflightInfo;
-    public GameObject missionSuccess;
-    public GameObject missionFail;
-    public GameObject earth;
+    [Header("References")]
+    public Camera MainCamera;
+    public GameObject GroundSet;
+    public GameObject LaunchCanvas;
+    public TextMeshProUGUI HeightText;
+    public GameObject InflightInfo;
+    public GameObject MissionSuccess;
+    public GameObject MissionFail;
+    public GameObject Earth;
+    public GameObject LaunchView;
+    public GameObject[] ObjectsToActivate;
 
-    private Camera _cam;
-    private bool _hasReachedorbitalAltitude = false;
-    private GameObject rocket;
+    [Header("Sequence Settings")]
+    public float DelayBetweenActivations = 0.5f;
+    public float ShakeDuration = 2f;
+    public float ShakeMagnitude = 0.1f;
 
-    void Awake()
+    private Camera _camera;
+    private GameObject _rocket;
+    private bool _reachedOrbitalAltitude;
+    private bool _activated500;
+
+    private const float HeightOffset = 73f;
+    private const float Threshold500 = 400f;
+
+    private void Awake()
     {
-        _cam = mainCamera;
-        _cam.clearFlags = CameraClearFlags.SolidColor;
-        _cam.backgroundColor = skyColor;
-        
+        _camera = MainCamera;
+        _camera.clearFlags = CameraClearFlags.SolidColor;
+        _camera.backgroundColor = SkyColor;
     }
 
-    void Start(){
-        rocket = GameObject.FindWithTag("Rocket");
+    private void Start()
+    {
+        _rocket = GameObject.FindWithTag("Rocket");
     }
 
-    void Update()
+    private void Update()
     {
-        // Compute current height from this object’s Y position
-        float currentHeight = transform.position.y - 73;
+        float currentHeight = transform.position.y - HeightOffset;
+        HeightText.text = $"{currentHeight:F0} m";
+    }
 
-        // Update the UI every frame
-        heightText.text = $"{currentHeight:F0} m";
+    public void SetupLaunch()
+    {
+        LaunchCanvas.SetActive(false);
+        StartCoroutine(MoveToPosition(MainCamera.transform, new Vector3(554f, 73f, 560f), 50f));
+        StartCoroutine(ActivateSequence());
     }
 
     public void StartLaunch()
     {
-        // turn off smoke
-        objectsToActivate[0].SetActive(false);
+        ObjectsToActivate[0].SetActive(false);
+        _reachedOrbitalAltitude = false;
+        _activated500 = false;
 
-        // todo: set orbitalAltitude based on mission outcome
-
-        // reset state if you want to allow re-launching
-        _hasReachedorbitalAltitude = false;
-        StartCoroutine(RotateCamera(initialTilt)); 
-        StartCoroutine(MoveCameraLocal(new Vector3(69f, -73f, 0f), 20f));
+        StartCoroutine(RotateTransform(MainCamera.transform, InitialTilt, 5f));
+        StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(69f, -73f, 0f), 5f));
         StartCoroutine(LaunchSequence());
     }
 
@@ -67,79 +77,57 @@ public class LaunchControl : MonoBehaviour
     {
         while (true)
         {
-            float y = transform.position.y;
+            float altitude = transform.position.y;
 
-            // 1) Ascend until threshold
-            if (!_hasReachedorbitalAltitude)
-                transform.Translate(Vector3.up * ascentSpeed * Time.deltaTime, Space.Self);
-
-            // 2) On first crossing of orbitalAltitude
-            if (!_hasReachedorbitalAltitude && y >= orbitalAltitude)
+            if (!_reachedOrbitalAltitude)
             {
-                _hasReachedorbitalAltitude = true;
-                groundSet.SetActive(false);
-                _cam.clearFlags = CameraClearFlags.Skybox;
-                
-                StartCoroutine(EndSequence());
+                transform.Translate(Vector3.up * AscentSpeed * Time.deltaTime, Space.Self);
+                UpdateSkyGradient(altitude);
             }
 
-            // 3) While below threshold, update sky gradient
-            if (!_hasReachedorbitalAltitude)
+            if (!_activated500 && altitude >= Threshold500)
             {
-                float t = Mathf.Clamp01(y / orbitalAltitude);
-                _cam.backgroundColor = backgroundGradient.Evaluate(t);
+                _activated500 = true;
+                // StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(175f, -71f, 69f), 10f));
+                // StartCoroutine(RotateToEuler(MainCamera.transform, new Vector3(-30f, -66f, 0f), 10f));
+            }
+
+            if (!_reachedOrbitalAltitude && altitude >= OrbitalAltitude)
+            {
+                _reachedOrbitalAltitude = true;
+                GroundSet.SetActive(false);
+                _camera.clearFlags = CameraClearFlags.Skybox;
+                StartCoroutine(HorizontalShift());
+                yield break;
             }
 
             yield return null;
         }
     }
 
-    private IEnumerator RotateLaunchView(Vector3 eulerOffset, float duration = 5f)
+    private void UpdateSkyGradient(float height)
     {
-        Quaternion start = transform.rotation;
-        Quaternion end   = start * Quaternion.Euler(eulerOffset);
+        float t = Mathf.Clamp01(height / OrbitalAltitude);
+        _camera.backgroundColor = BackgroundGradient.Evaluate(t);
+    }
+
+    private IEnumerator RotateTransform(Transform target, Vector3 eulerOffset, float duration)
+    {
+        Quaternion start = target.rotation;
+        Quaternion end = start * Quaternion.Euler(eulerOffset);
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            transform.rotation = Quaternion.Slerp(start, end, elapsed / duration);
+            target.rotation = Quaternion.Slerp(start, end, elapsed / duration);
             yield return null;
         }
-        transform.rotation = end;
+
+        target.rotation = end;
     }
 
-    private IEnumerator RotateCamera(Vector3 eulerOffset, float duration = 5f)
-    {
-        Quaternion start = mainCamera.transform.rotation;
-        Quaternion end   = start * Quaternion.Euler(eulerOffset);
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            mainCamera.transform.rotation = Quaternion.Slerp(start, end, elapsed / duration);
-            yield return null;
-        }
-        mainCamera.transform.rotation = end;
-    }
-
-    private IEnumerator RotateObject(GameObject thing, Vector3 eulerOffset, float duration = 5f)
-    {
-        Quaternion start = thing.transform.rotation;
-        Quaternion end   = start * Quaternion.Euler(eulerOffset);
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            thing.transform.rotation = Quaternion.Slerp(start, end, elapsed / duration);
-            yield return null;
-        }
-        thing.transform.rotation = end;
-    }
-
-    private IEnumerator RotateToEuler(Transform  thing, Vector3 targetEuler, float duration = 5f)
+    private IEnumerator RotateToEuler(Transform thing, Vector3 targetEuler, float duration = 5f)
     {
         // if you want to respect parent orientation, use localRotation;
         // otherwise swap Local↔World as needed
@@ -157,142 +145,98 @@ public class LaunchControl : MonoBehaviour
         thing.transform.localRotation = end;
     }
 
-    // LAUNCH setup
-    public void SetupLaunch()
+    private IEnumerator MoveToPosition(Transform target, Vector3 destination, float speed)
     {
-        launchCanvas.SetActive(false);
-        StartCoroutine(MoveCamera(new Vector3(554f, 73f, 560f), 50));
-        StartCoroutine(ActivateSequence());
-    }
-
-    IEnumerator MoveCamera(Vector3 targetPosition, float moveSpeed)
-    {
-        while (Vector3.Distance(mainCamera.transform.position, targetPosition) > 0.01f)
+        while (Vector3.Distance(target.position, destination) > 0.01f)
         {
-            mainCamera.transform.position = Vector3.MoveTowards(
-                mainCamera.transform.position,
-                targetPosition,
-                moveSpeed * Time.deltaTime
-            );
+            target.position = Vector3.MoveTowards(target.position, destination, speed * Time.deltaTime);
             yield return null;
         }
-        mainCamera.transform.position = targetPosition;
+
+        target.position = destination;
     }
 
-    IEnumerator MoveObject(Transform thing, Vector3 targetPosition, float moveSpeed)
+    private IEnumerator MoveToLocalPosition(Transform target, Vector3 destination, float speed)
     {
-        while (Vector3.Distance(thing.transform.position, targetPosition) > 0.01f)
-        {
-            thing.transform.position = Vector3.MoveTowards(
-                thing.transform.position,
-                targetPosition,
-                moveSpeed * Time.deltaTime
-            );
-            yield return null;
-        }
-        thing.transform.position = targetPosition;
-    }
+        Vector3 start = target.localPosition;
+        float elapsed = 0f;
 
-    IEnumerator MoveCameraLocal(Vector3 targetLocalPos, float moveSpeed)
-    {
-        // move its localPosition instead of world position
-        while (Vector3.Distance(mainCamera.transform.localPosition, targetLocalPos) > 0.01f)
+        while (elapsed < speed)
         {
-            mainCamera.transform.localPosition = Vector3.MoveTowards(
-                mainCamera.transform.localPosition,
-                targetLocalPos,
-                moveSpeed * Time.deltaTime
-            );
+            elapsed += Time.deltaTime;
+            // t goes 0→1 with eased curve
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / speed);
+            target.localPosition = Vector3.Lerp(start, destination, t);
             yield return null;
         }
-        mainCamera.transform.localPosition = targetLocalPos;
-    }
 
-    IEnumerator MoveObjectLocal(GameObject thing, Vector3 targetLocalPos, float moveSpeed)
-    {
-        // move its localPosition instead of world position
-        while (Vector3.Distance(thing.transform.localPosition, targetLocalPos) > 0.01f)
-        {
-            thing.transform.localPosition = Vector3.MoveTowards(
-                thing.transform.localPosition,
-                targetLocalPos,
-                moveSpeed * Time.deltaTime
-            );
-            yield return null;
-        }
-        thing.transform.localPosition = targetLocalPos;
+        target.localPosition = destination;
     }
 
     private IEnumerator ActivateSequence()
     {
-        for (int i = 0; i < objectsToActivate.Length; i++)
+        for (int i = 0; i < ObjectsToActivate.Length; i++)
         {
-            if(i == 1){
-                objectsToActivate[1].SetActive(true);
-                StartCoroutine(DoShake());
-                objectsToActivate[2].SetActive(true);
-            }else if(i == 2){
-                Invoke(nameof(StartLaunch), 1f);
+            if (i == 1)
+            {
+                ObjectsToActivate[1].SetActive(true);
+                StartCoroutine(ShakeCamera());
+                ObjectsToActivate[2].SetActive(true);
             }
-            else{
-                objectsToActivate[i].SetActive(true);
+            else if (i == 2)
+            {
+                Invoke(nameof(StartLaunch), 2f);
             }
-            yield return new WaitForSeconds(delayBetween);
+            else
+            {
+                ObjectsToActivate[i].SetActive(true);
+            }
+
+            yield return new WaitForSeconds(DelayBetweenActivations);
         }
     }
 
-    public float shakeDuration = 2f;
-    public float shakeMagnitude = 0.1f;
-    private IEnumerator DoShake()
+    private IEnumerator ShakeCamera()
     {
-        // Cache the original local position so we can reset
-        Vector3 originalPos = mainCamera.transform.localPosition;
+        Vector3 originalPos = MainCamera.transform.localPosition;
         float elapsed = 0f;
 
-        while (elapsed < shakeDuration)
+        while (elapsed < ShakeDuration)
         {
-            // Pick a random point inside a unit circle for X and Y
-            Vector2 offset = Random.insideUnitCircle * shakeMagnitude;
-            
-            // Apply to localPosition (so it respects any parent transform)
-            mainCamera.transform.localPosition = originalPos + new Vector3(offset.x, offset.y, 0f);
-
             elapsed += Time.deltaTime;
+            Vector2 offset = Random.insideUnitCircle * ShakeMagnitude;
+            MainCamera.transform.localPosition = originalPos + new Vector3(offset.x, offset.y, 0f);
             yield return null;
         }
 
-        // Restore exact original position
-        mainCamera.transform.localPosition = originalPos;
+        MainCamera.transform.localPosition = originalPos;
     }
 
-    // launch end
-    public IEnumerator EndSequence(){
-        // activate earth
-        earth.SetActive(true);
-        // move up earth
-        // start at -623 -1613 -1035
-        StartCoroutine(MoveObject(earth.transform, new Vector3(-1106f, -501f, -1035), 10f));
-        // turn rocket
+    private IEnumerator HorizontalShift()
+    {
+        // kill engines
+        ObjectsToActivate[1].SetActive(false);
+        // hesitate at top
+        yield return new WaitForSeconds(2f);
+        // earth 
+        Earth.SetActive(true);
+        StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f ,-1598f ,-535f), 50f));
+        // rocket
+        StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 2f));
+        // camera
+        StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-120f, 111f, -88f), 50f));
+        yield return StartCoroutine(RotateToEuler(MainCamera.transform, new Vector3(30f, 0f, 0f), 5f));
+    }
 
-        // turn camera
-        StartCoroutine(MoveCameraLocal(new Vector3(-154f, 12f, -120f), 10f));
-        StartCoroutine(RotateToEuler(mainCamera.transform, new Vector3(-10f, 32f, 0f), 10f));
-
-        StartCoroutine(RotateToEuler(rocket.transform, new Vector3(303.617889f,223.776978f,308.639282f), 10f));
-        StartCoroutine(MoveObjectLocal(rocket, new Vector3(182.129501f,-23.6542969f,32.101059f), 10f));
-        
-
-        // kill burn 
-        objectsToActivate[1].SetActive(false);
-        // hide altitude
-        inflightInfo.SetActive(false);
-        // show mission status
-        missionSuccess.SetActive(true);
-
-        yield return null;
+    private IEnumerator EndSequence()
+    {
+        StopAllCoroutines();
+        // Earth.SetActive(true);
+        // StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-154f, 12f, -120f), 10f));
+        // StartCoroutine(RotateTransform(MainCamera.transform, new Vector3(-10f, 32f, 0f), 10f));
+        // ObjectsToActivate[1].SetActive(false);
+        // InflightInfo.SetActive(false);
+        // MissionSuccess.SetActive(true);
+        yield break;
     }
 }
-        // StartCoroutine(RotateToEuler(rocket.transform, new Vector3(0f, 36f, -52f), 10f));
-        // StartCoroutine(MoveObjectLocal(rocket, new Vector3(70f, 0f, 0f), 10f));
-        // StartCoroutine(MoveCameraLocal(new Vector3(-255f, 116f, -203f), 10f));
-        // StartCoroutine(RotateToEuler(mainCamera.transform, new Vector3(0f, 23f, 0f), 10f));
