@@ -22,7 +22,7 @@ public class LaunchControl : MonoBehaviour
     public GameObject MissionFail;
     public GameObject Earth;
     public GameObject LaunchView;
-    public GameObject[] ObjectsToActivate;
+    public GameObject Smoke;
 
     [Header("Sequence Settings")]
     public float DelayBetweenActivations = 0.5f;
@@ -36,6 +36,7 @@ public class LaunchControl : MonoBehaviour
 
     private const float HeightOffset = 73f;
     private const float Threshold500 = 400f;
+    private GameObject Thrusters;
 
     private void Awake()
     {
@@ -47,6 +48,19 @@ public class LaunchControl : MonoBehaviour
     private void Start()
     {
         _rocket = GameObject.FindWithTag("Rocket");
+        foreach (Transform child in _rocket.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.CompareTag("fire"))
+            {
+                Thrusters = child.gameObject;
+                break;
+            }
+        }
+
+        if (Thrusters == null)
+        {
+            Debug.LogWarning("Thrusters object not found under Rocket. Please tag your thruster child with 'fire'.");
+        }
     }
 
     private void Update()
@@ -64,7 +78,6 @@ public class LaunchControl : MonoBehaviour
 
     public void StartLaunch()
     {
-        ObjectsToActivate[0].SetActive(false);
         _reachedOrbitalAltitude = false;
         _activated500 = false;
 
@@ -175,21 +188,17 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator ActivateSequence()
     {
-        for (int i = 0; i < ObjectsToActivate.Length; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (i == 1)
             {
-                ObjectsToActivate[1].SetActive(true);
+                Thrusters.SetActive(true);
                 StartCoroutine(ShakeCamera());
-                ObjectsToActivate[2].SetActive(true);
+                Smoke.SetActive(true);
             }
             else if (i == 2)
             {
                 Invoke(nameof(StartLaunch), 2f);
-            }
-            else
-            {
-                ObjectsToActivate[i].SetActive(true);
             }
 
             yield return new WaitForSeconds(DelayBetweenActivations);
@@ -214,15 +223,15 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator HorizontalShift()
     {
-        // kill engines
-        ObjectsToActivate[1].SetActive(false);
         // hesitate at top
-        yield return new WaitForSeconds(2f);
+        // yield return new WaitForSeconds(2f);
         // earth 
         Earth.SetActive(true);
         StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f ,-1598f ,-535f), 50f));
         // rocket
-        StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 2f));
+        yield return StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 2f));
+        // kill engines
+        Thrusters.SetActive(false);
         // camera
         StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-120f, 111f, -88f), 50f));
         yield return StartCoroutine(RotateToEuler(MainCamera.transform, new Vector3(30f, 0f, 0f), 5f));

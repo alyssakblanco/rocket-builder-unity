@@ -273,7 +273,7 @@ public class BuilderController : MonoBehaviour
         Transform top    = GameObject.FindWithTag("TopStage")?.transform;
         Transform nose   = GameObject.FindWithTag("NoseCone")?.transform;
 
-        var rocket = new GameObject("Rocket");
+        var rocket = new GameObject("Rocket"){ tag = "Rocket" };
         bottom.SetParent(rocket.transform, true);
         if (middle != null) middle.SetParent(rocket.transform, true);
         if (top    != null) top.SetParent(rocket.transform, true);
