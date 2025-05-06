@@ -97,6 +97,8 @@ public class BuilderController : MonoBehaviour
         currentBuild[RocketPart.Propellant] = "solid";
         currentBuild[RocketPart.Control]    = "fins";
 
+        SetCostAndWeight();
+
         // Spawn bottom stage
         // 1) set up your bottomStage reference
         bottomStage = bottomStageInstance;
@@ -125,7 +127,7 @@ public class BuilderController : MonoBehaviour
         {
             swingTimer += Time.deltaTime * swingSpeed;
             float z = Mathf.Sin(swingTimer) * swingAngle;
-            gimbalPrefab.transform.localRotation = Quaternion.Euler(0f, 0f, z);
+            gimbalPrefab.transform.localEulerAngles  = new Vector3(0f, 0f, z);
         }
     }
 
@@ -196,6 +198,8 @@ public class BuilderController : MonoBehaviour
 
         // finally, re‑position your nose up top
         UpdateNose(currentBuild[RocketPart.Nose]);
+
+        SetCostAndWeight();
     }
 
     private void UpdateNose(string sel)
@@ -216,6 +220,8 @@ public class BuilderController : MonoBehaviour
                         anchor.position,
                         anchor.rotation);
         nose.transform.SetParent(transform, true);  // flat again
+
+        SetCostAndWeight();
     }
 
     private void UpdatePropellant(string selection)
@@ -227,7 +233,6 @@ public class BuilderController : MonoBehaviour
             return;
         }
         currentBuild[RocketPart.Propellant] = selection;
-        Debug.Log($"Propellant set to: {selection}");
         
         // Update the propellant image
         if (propellantImage != null)
@@ -245,6 +250,8 @@ public class BuilderController : MonoBehaviour
         {
             Debug.LogWarning("Propellant image is not assigned.");
         }
+
+        SetCostAndWeight();
     }
 
     private void UpdateControl(string selection)
@@ -263,6 +270,8 @@ public class BuilderController : MonoBehaviour
         {
             gimbalPrefab.transform.localRotation = Quaternion.identity;
         }
+
+        SetCostAndWeight();
     }
 
     // LAUNCH PAD PREP
@@ -348,6 +357,76 @@ public class BuilderController : MonoBehaviour
                 stagesHeader.text = "Three Stages";
                 stagesDesc.text = Stages[2];
             }
+        }
+    }
+
+    // COST WIEGHT STUFF
+    [Header("Cost & Weight")]
+    public Color32 activeColor = new Color32(0xEE, 0x9B, 0x00, 0xFF);
+    public Color inactiveColor = Color.white;
+    public Image[] money;
+    public Image[] anvil;
+
+    public void SetCostAndWeight(){
+        float cost = 0;
+        float weight = 0;
+
+        if(currentBuild[RocketPart.Nose] == "ogive"){
+            cost += 1;
+            weight += 1;
+        }
+        if(currentBuild[RocketPart.Nose] == "blunt"){
+            cost += 1;
+            weight += 1;
+        }
+        if(currentBuild[RocketPart.Nose] == "payload"){
+            cost += 2;
+            weight += 3;
+        }
+
+        if(currentBuild[RocketPart.Propellant] == "solid"){
+            cost += 1;
+            weight += 2;
+        }
+        if(currentBuild[RocketPart.Propellant] == "liquid"){
+            cost += 2;
+            weight += 1;
+        }
+
+        if(currentBuild[RocketPart.Control] == "gimbal"){
+            cost += 2;
+            weight += 2;
+        }
+        if(currentBuild[RocketPart.Control] == "fins"){
+            cost += 1;
+            weight += 1;
+        }
+
+        if(currentBuild[RocketPart.Stage] == "1"){
+            cost += 1;
+            weight += 1;
+        }
+        if(currentBuild[RocketPart.Stage] == "2"){
+            cost += 2;
+            weight += 2;
+        }
+        if(currentBuild[RocketPart.Stage] == "3"){
+            cost += 3;
+            weight += 3;
+        }
+
+        cost = Mathf.Ceil(cost/2);
+        for (int i = 0; i < money.Length; i++)
+        {
+            var img = money[i];
+            img.color = (i < cost) ? activeColor : inactiveColor;
+        }
+
+        weight = Mathf.Ceil(weight/2);
+        for (int i = 0; i < anvil.Length; i++)
+        {
+            var img = anvil[i];
+            img.color = (i < weight) ? activeColor : inactiveColor;
         }
     }
 }

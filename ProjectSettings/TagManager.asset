@@ -11,6 +11,8 @@ TagManager:
   - MiddleStage
   - Rocket
   - fire
+  - dollar
+  - ancil
   layers:
   - Default
   - TransparentFX
