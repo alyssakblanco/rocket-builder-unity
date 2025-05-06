@@ -69,6 +69,7 @@ public class BuilderController : MonoBehaviour
 
     private float cameraMoveSpeed = 50f;
 
+    private bool isPayload = false;
     // gimbal animation
     private bool gimbalShouldSwing = false;
     public float swingSpeed = 50f;
@@ -123,6 +124,7 @@ public class BuilderController : MonoBehaviour
 
     void Update()
     {
+        // move engines
         if (gimbalShouldSwing && gimbalPrefab != null)
         {
             swingTimer += Time.deltaTime * swingSpeed;
@@ -219,7 +221,13 @@ public class BuilderController : MonoBehaviour
         nose = Instantiate(nosePrefabs[idx],
                         anchor.position,
                         anchor.rotation);
-        nose.transform.SetParent(transform, true);  // flat again
+        nose.transform.SetParent(transform, true);  
+
+        if(sel == "payload"){
+            isPayload = true;
+        }else{
+           isPayload = false; 
+        }
 
         SetCostAndWeight();
     }
