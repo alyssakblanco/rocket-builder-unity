@@ -48,16 +48,6 @@ public class BuilderSectionSelection : MonoBehaviour
 
     public void SetCurrentSection(string selection)
     {
-        var build = _builderController.GetCurrentBuild();
-        if (build.TryGetValue(BuilderController.RocketPart.Stage, out var stage))
-        {
-            Debug.Log("Current Stage selection: " + stage);
-        }
-        else
-        {
-            Debug.LogWarning("Stage not set yet.");
-        }
-
         // turn off all sections
         noseSection.SetActive(false);
         propellantSection.SetActive(false);
@@ -68,7 +58,7 @@ public class BuilderSectionSelection : MonoBehaviour
         switch (selection)
         {
             case "Nose":
-                StartCoroutine(MoveCamera(stage));
+                StartCoroutine(MoveCamera(GameData.currentBuild[BuilderController.RocketPart.Stage]));
                 UpdateGroupVisuals(0);
                 noseSection.SetActive(true);
                 break;
@@ -84,7 +74,7 @@ public class BuilderSectionSelection : MonoBehaviour
                 break;
             case "Stages":
                 UpdateGroupVisuals(3);
-                StartCoroutine(MoveCamera(stage));
+                StartCoroutine(MoveCamera(GameData.currentBuild[BuilderController.RocketPart.Stage]));
                 stagesSection.SetActive(true);
                 break;
             default:

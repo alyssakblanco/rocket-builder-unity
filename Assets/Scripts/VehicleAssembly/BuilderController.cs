@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Text.RegularExpressions;
 
 public class BuilderController : MonoBehaviour
 {
@@ -58,11 +59,11 @@ public class BuilderController : MonoBehaviour
     public GameObject gimbalPrefab;
 
     // Tracks current selections
-    private Dictionary<RocketPart,string> currentBuild = new Dictionary<RocketPart,string>();
-    public Dictionary<RocketPart, string> GetCurrentBuild()
-    {
-        return currentBuild;
-    }
+    // private Dictionary<RocketPart,string> currentBuild = new Dictionary<RocketPart,string>();
+    // public Dictionary<RocketPart, string> GetCurrentBuild()
+    // {
+    //     return currentBuild;
+    // }
 
     // Instantiated GameObjects
     private GameObject bottomStage, middleStage, topStage, nose, control;
@@ -76,50 +77,73 @@ public class BuilderController : MonoBehaviour
     public float swingAngle = 10f;
     private float swingTimer = 0f;
 
-    [Header("UI Content")]
-    public TextMeshProUGUI noseDesc;
-    public TextMeshProUGUI propellantDesc;
-    public TextMeshProUGUI controlDesc;
-    public TextMeshProUGUI stagesDesc;
+    [Header("Section Titles")]
     public TextMeshProUGUI noseTitle;
     public TextMeshProUGUI propellantTitle;
     public TextMeshProUGUI controlTitle;
     public TextMeshProUGUI stagesTitle;
+
+    [Header("Option Headers")]
     public TextMeshProUGUI noseHeader;
     public TextMeshProUGUI propellantHeader;
     public TextMeshProUGUI controlHeader;
     public TextMeshProUGUI stagesHeader;
+    
+    [Header("Option Descriptions")]
+    public TextMeshProUGUI noseDesc;
+    public TextMeshProUGUI propellantDesc;
+    public TextMeshProUGUI controlDesc;
+    public TextMeshProUGUI stagesDesc;
 
     void Start()
     {
-        // 1) INITIALIZE DEFAULTS
-        currentBuild[RocketPart.Stage]      = "1";
-        currentBuild[RocketPart.Nose]       = "ogive";
-        currentBuild[RocketPart.Propellant] = "solid";
-        currentBuild[RocketPart.Control]    = "fins";
-
+        if(!GameData.keepCurrentSelections){
+            Debug.Log("goodbye" + GameData.keepCurrentSelections);
+            GameData.currentBuild[BuilderController.RocketPart.Stage]      = "1";
+            GameData.currentBuild[BuilderController.RocketPart.Nose]       = "ogive";
+            GameData.currentBuild[BuilderController.RocketPart.Propellant] = "solid";
+            GameData.currentBuild[BuilderController.RocketPart.Control]    = "fins";
+        }
+        
         SetCostAndWeight();
 
         // Spawn bottom stage
-        // 1) set up your bottomStage reference
         bottomStage = bottomStageInstance;
-        // 2) find the anchor transform inside it
         Transform bottomAnchor = bottomStage.transform.Find("anchor");
         if (bottomAnchor == null)
         {
             Debug.LogError("Could not find an 'anchor' child under bottomStage!");
             return;
         }
-        // 3) instantiate the default nose (ogive) at that spot,
-        //    parented under the BuilderController (or leave un‑parented— your choice)
+
+        // Spawn the nose according to the saved selection
+        string noseSel = GameData.currentBuild[BuilderController.RocketPart.Nose];
+        Debug.Log("GameData.currentBuild[BuilderController.RocketPart.Nose]" + GameData.currentBuild[BuilderController.RocketPart.Nose]);
+        int noseIdx;
+        switch (noseSel)
+        {
+            case "ogive":   noseIdx = 0; break;
+            case "blunt":   noseIdx = 1; break;
+            case "payload": noseIdx = 2; break;
+            default:        noseIdx = 0; Debug.LogWarning($"Unknown nose 1 '{noseSel}'"); break;
+        }
         nose = Instantiate(
-            nosePrefabs[0],                  // prefab to spawn
-            bottomAnchor.position,           // world‑space pos
-            bottomAnchor.rotation,           // world‑space rot
-            transform                        // parent: this BuilderController
+            nosePrefabs[noseIdx],
+            bottomAnchor.position,
+            bottomAnchor.rotation,
+            transform
         );
 
-        propellantImage.sprite = solidPropellantSprite;
+        UpdateNose(GameData.currentBuild[BuilderController.RocketPart.Nose]);
+        UpdateStage(GameData.currentBuild[BuilderController.RocketPart.Stage]);
+        UpdatePropellant(GameData.currentBuild[BuilderController.RocketPart.Propellant]);
+        UpdateControl(GameData.currentBuild[BuilderController.RocketPart.Control]);
+
+        // Apply the propellant sprite
+        string propSel = GameData.currentBuild[BuilderController.RocketPart.Propellant].ToLower();
+        propellantImage.sprite = (propSel == "liquid")
+            ? liquidPropellantSprite
+            : solidPropellantSprite;
     }
 
     void Update()
@@ -169,7 +193,7 @@ public class BuilderController : MonoBehaviour
     {
         UpdateContent("stages", sel);
         int count = int.Parse(sel);
-        currentBuild[RocketPart.Stage] = sel;
+        GameData.currentBuild[BuilderController.RocketPart.Stage] = sel;
 
         StartCoroutine(MoveCamera(count));
 
@@ -199,21 +223,38 @@ public class BuilderController : MonoBehaviour
         }
 
         // finally, re‑position your nose up top
-        UpdateNose(currentBuild[RocketPart.Nose]);
+        UpdateNose(GameData.currentBuild[BuilderController.RocketPart.Nose]);
 
         SetCostAndWeight();
     }
 
-    private void UpdateNose(string sel)
+    private void UpdateNose(string rawSel)
     {
+        var sel = rawSel.Trim().ToLowerInvariant();
         UpdateContent("nose", sel);
-        currentBuild[RocketPart.Nose] = sel;
-        int idx = sel == "ogive" ? 0 : sel == "blunt" ? 1 : 2;
+        GameData.currentBuild[BuilderController.RocketPart.Nose] = sel;
+        int idx;
+        switch(sel)
+        {
+        case "ogive":
+            idx = 0;
+            break;
+        case "blunt":
+            idx = 1;
+            break;
+        case "payload":
+            idx = 2;
+            break;
+        default:
+            Debug.LogWarning($"Unknown nose 2 “{sel}”");
+            idx = 0;
+            break;
+        }
         if (nose != null) Destroy(nose);
 
         // pick the right anchor
         Transform anchor;
-        int stageCount = int.Parse(currentBuild[RocketPart.Stage]);
+        int stageCount = int.Parse(GameData.currentBuild[BuilderController.RocketPart.Stage]);
         if      (stageCount >= 3 && topStage    != null) anchor = topStage   .transform.Find("anchor");
         else if (stageCount >= 2 && middleStage != null) anchor = middleStage.transform.Find("anchor");
         else                                             anchor = bottomStage.transform.Find("anchor");
@@ -240,7 +281,7 @@ public class BuilderController : MonoBehaviour
             Debug.LogError($"Invalid propellant selection: {selection}");
             return;
         }
-        currentBuild[RocketPart.Propellant] = selection;
+        GameData.currentBuild[BuilderController.RocketPart.Propellant] = selection;
         
         // Update the propellant image
         if (propellantImage != null)
@@ -264,8 +305,23 @@ public class BuilderController : MonoBehaviour
 
     private void UpdateControl(string selection)
     {
+        var cleaned = selection
+            .Replace("\r", "")
+            .Replace("\n", " ")
+            .Trim();
+
+        var m = Regex.Match(cleaned, "(?i)gimbal");
+        var norm = m.Success
+            ? m.Value.ToLowerInvariant()   // “gimbal”
+            : cleaned.ToLowerInvariant();  // fallback to the full cleaned string
+
+        if(norm == "gimbal"){
+            selection = norm;
+            Debug.Log("selection " + selection);
+        }
+
         UpdateContent("control", selection);
-        currentBuild[RocketPart.Control] = selection;
+        GameData.currentBuild[BuilderController.RocketPart.Control] = selection;
 
         // Toggle fins
         finsPrefab.SetActive(selection == "fins");
@@ -308,6 +364,7 @@ public class BuilderController : MonoBehaviour
 
     // UI Control
     public void UpdateContent(string section, string sel){
+        Debug.Log("text section " + section);
         if(section == "nose"){
             if(sel == "ogive"){
                 noseTitle.text = "Ogive";
@@ -338,6 +395,7 @@ public class BuilderController : MonoBehaviour
             }
         }
         if(section == "control"){
+            Debug.Log("text setter " + sel);
             if(sel == "fins"){
                 controlTitle.text = "Movable Fins";
                 controlHeader.text = "Movable Fins";
@@ -379,46 +437,46 @@ public class BuilderController : MonoBehaviour
         float cost = 0;
         float weight = 0;
 
-        if(currentBuild[RocketPart.Nose] == "ogive"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Nose] == "ogive"){
             cost += 1;
             weight += 1;
         }
-        if(currentBuild[RocketPart.Nose] == "blunt"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Nose] == "blunt"){
             cost += 1;
             weight += 1;
         }
-        if(currentBuild[RocketPart.Nose] == "payload"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Nose] == "payload"){
             cost += 2;
             weight += 3;
         }
 
-        if(currentBuild[RocketPart.Propellant] == "solid"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Propellant] == "solid"){
             cost += 1;
             weight += 2;
         }
-        if(currentBuild[RocketPart.Propellant] == "liquid"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Propellant] == "liquid"){
             cost += 2;
             weight += 1;
         }
 
-        if(currentBuild[RocketPart.Control] == "gimbal"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Control] == "gimbal"){
             cost += 2;
             weight += 2;
         }
-        if(currentBuild[RocketPart.Control] == "fins"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Control] == "fins"){
             cost += 1;
             weight += 1;
         }
 
-        if(currentBuild[RocketPart.Stage] == "1"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Stage] == "1"){
             cost += 1;
             weight += 1;
         }
-        if(currentBuild[RocketPart.Stage] == "2"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Stage] == "2"){
             cost += 2;
             weight += 2;
         }
-        if(currentBuild[RocketPart.Stage] == "3"){
+        if(GameData.currentBuild[BuilderController.RocketPart.Stage] == "3"){
             cost += 3;
             weight += 3;
         }
