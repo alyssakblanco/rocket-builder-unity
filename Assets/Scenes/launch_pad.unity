@@ -11165,6 +11165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1701233015}
   - component: {fileID: 1701233016}
+  - component: {fileID: 1701233017}
   m_Layer: 0
   m_Name: RocketLoader
   m_TagString: Untagged
@@ -11209,6 +11210,22 @@ MonoBehaviour:
   - rocketName: v2
     rocketPrefab: {fileID: 348638896763006269, guid: 793b1848133bdd0418f4bc190cc13485, type: 3}
   parentObject: {fileID: 1410490229}
+--- !u!114 &1701233017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701233014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efbf686401a1ed4478c817796422421e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentNose: {fileID: 574212263}
+  currentPropellant: {fileID: 1264495543}
+  currentControl: {fileID: 1967310752}
+  currentStages: {fileID: 730304364}
 --- !u!1 &1707737083
 GameObject:
   m_ObjectHideFlags: 0

@@ -8461,10 +8461,6 @@ MonoBehaviour:
   gimbalPrefab: {fileID: 8115395878557876056}
   swingSpeed: 3
   swingAngle: 10
-  noseDesc: {fileID: 1277957328}
-  propellantDesc: {fileID: 1360662536}
-  controlDesc: {fileID: 1521418872}
-  stagesDesc: {fileID: 326400296}
   noseTitle: {fileID: 1291993206}
   propellantTitle: {fileID: 923222330}
   controlTitle: {fileID: 1556935562}
@@ -8473,6 +8469,10 @@ MonoBehaviour:
   propellantHeader: {fileID: 1333370843}
   controlHeader: {fileID: 328277013}
   stagesHeader: {fileID: 265623578}
+  noseDesc: {fileID: 1277957328}
+  propellantDesc: {fileID: 1360662536}
+  controlDesc: {fileID: 1521418872}
+  stagesDesc: {fileID: 326400296}
   activeColor:
     serializedVersion: 2
     rgba: 4278229998
@@ -11780,6 +11780,10 @@ MonoBehaviour:
   - {fileID: 373858204}
   activeColor: {r: 0.81886786, g: 0.3180102, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedTextColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedTextStyle: 1
+  normalTextColor: {r: 0, g: 0, b: 0, a: 1}
+  normalTextStyle: 0
 --- !u!1 &1990678676
 GameObject:
   m_ObjectHideFlags: 0
