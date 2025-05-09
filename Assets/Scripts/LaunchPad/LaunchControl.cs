@@ -35,7 +35,7 @@ public class LaunchControl : MonoBehaviour
     private bool _activated500;
 
     private const float HeightOffset = 73f;
-    private const float Threshold500 = 400f;
+    private const float Threshold500 = 800f;
     private GameObject Thrusters;
 
     private void Awake()
@@ -101,8 +101,11 @@ public class LaunchControl : MonoBehaviour
             if (!_activated500 && altitude >= Threshold500)
             {
                 _activated500 = true;
-                // StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(175f, -71f, 69f), 10f));
-                // StartCoroutine(RotateToEuler(MainCamera.transform, new Vector3(-30f, -66f, 0f), 10f));
+                if(!GameData.makesItToSpace){
+                    StopAllCoroutines();
+                    Thrusters.SetActive(false);
+                    StartCoroutine(EndSequence());
+                }
             }
 
             if (!_reachedOrbitalAltitude && altitude >= OrbitalAltitude)
@@ -227,25 +230,27 @@ public class LaunchControl : MonoBehaviour
         // yield return new WaitForSeconds(2f);
         // earth 
         Earth.SetActive(true);
-        StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f ,-1598f ,-535f), 50f));
+        StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f ,-1598f ,-535f), 100f));
         // rocket
         yield return StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 2f));
         // kill engines
         Thrusters.SetActive(false);
         // camera
-        StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-120f, 111f, -88f), 50f));
+        StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-120f, 111f, -88f), 10f));
         yield return StartCoroutine(RotateToEuler(MainCamera.transform, new Vector3(30f, 0f, 0f), 5f));
+        StartCoroutine(EndSequence());
     }
 
     private IEnumerator EndSequence()
     {
-        StopAllCoroutines();
-        // Earth.SetActive(true);
-        // StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-154f, 12f, -120f), 10f));
-        // StartCoroutine(RotateTransform(MainCamera.transform, new Vector3(-10f, 32f, 0f), 10f));
-        // ObjectsToActivate[1].SetActive(false);
-        // InflightInfo.SetActive(false);
-        // MissionSuccess.SetActive(true);
+        Debug.Log("being called");
+        
+        if(GameData.missionStatus){
+            MissionSuccess.SetActive(true);
+        }else{
+           MissionFail.SetActive(true); 
+        }
+
         yield break;
     }
 }

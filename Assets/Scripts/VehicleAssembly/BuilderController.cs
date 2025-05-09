@@ -58,13 +58,6 @@ public class BuilderController : MonoBehaviour
     public GameObject finsPrefab;
     public GameObject gimbalPrefab;
 
-    // Tracks current selections
-    // private Dictionary<RocketPart,string> currentBuild = new Dictionary<RocketPart,string>();
-    // public Dictionary<RocketPart, string> GetCurrentBuild()
-    // {
-    //     return currentBuild;
-    // }
-
     // Instantiated GameObjects
     private GameObject bottomStage, middleStage, topStage, nose, control;
 

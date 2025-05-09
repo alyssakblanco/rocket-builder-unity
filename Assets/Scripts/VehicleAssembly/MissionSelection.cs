@@ -34,8 +34,8 @@ public class MissionSelection : MonoBehaviour
     };
 
     void Awake(){
-        missionTitle.text = Missions[CurrentMission.SelectedMission].title;
-        missionDesc.text  = Missions[CurrentMission.SelectedMission].desc;
+        missionTitle.text = Missions[GameData.selectedMission].title;
+        missionDesc.text  = Missions[GameData.selectedMission].desc;
     }
 
     // CHANGE MISSION MODAL FUNCTIONS

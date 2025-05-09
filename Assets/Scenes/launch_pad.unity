@@ -8610,7 +8610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1397262159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11226,6 +11226,8 @@ MonoBehaviour:
   currentPropellant: {fileID: 1264495543}
   currentControl: {fileID: 1967310752}
   currentStages: {fileID: 730304364}
+  success_hint: {fileID: 1860596205}
+  fail_hint: {fileID: 1919796325}
 --- !u!1 &1707737083
 GameObject:
   m_ObjectHideFlags: 0
@@ -12492,7 +12494,7 @@ GameObject:
   - component: {fileID: 1860596206}
   - component: {fileID: 1860596205}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: hint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
