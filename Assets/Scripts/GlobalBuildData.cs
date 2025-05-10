@@ -18,6 +18,22 @@ public static class GameData
     public static bool makesItToSpace;
     public static string hint;
 
+    public static readonly MissionInfo[] Missions = new MissionInfo[]
+    {
+        new MissionInfo {
+            title = "Satellite Deployment",
+            desc  = "Leave Earth’s atmosphere, deploy a satellite and return."
+        },
+        new MissionInfo {
+            title = "Atmosphere Research",
+            desc  = "Stay in Earth’s atmosphere briefly and then return."
+        },
+        new MissionInfo {
+            title = "Planet Exploration",
+            desc  = "Breeze past our atmosphere and reach Mars."
+        }
+    };
+
     public static void SetMissionStatus(){
         // sat deployment
         if(selectedMission == 0){

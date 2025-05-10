@@ -56,11 +56,6 @@ public class LaunchControl : MonoBehaviour
                 break;
             }
         }
-
-        if (Thrusters == null)
-        {
-            Debug.LogWarning("Thrusters object not found under Rocket. Please tag your thruster child with 'fire'.");
-        }
     }
 
     private void Update()
@@ -243,8 +238,6 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator EndSequence()
     {
-        Debug.Log("being called");
-        
         if(GameData.missionStatus){
             MissionSuccess.SetActive(true);
         }else{

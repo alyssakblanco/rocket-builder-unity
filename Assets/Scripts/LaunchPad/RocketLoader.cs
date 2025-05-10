@@ -36,6 +36,11 @@ public class RocketLoader : MonoBehaviour
                 // Match the inspector’s uniform scale of 4.8832
                 rocket.transform.localScale = new Vector3(4.8832f, 4.8832f, 4.8832f);
                 rocket.transform.SetParent(parentObject.transform);
+
+
+                Transform bottom = GameObject.FindWithTag("BottomStage")?.transform;
+                Transform enginesT = bottom.Find("engines");
+                 enginesT.localRotation = Quaternion.identity;
             }else{
                 choice = "saturn";
             }
@@ -69,17 +74,11 @@ public class RocketLoader : MonoBehaviour
                 break;
 
             default:
-                Debug.LogWarning($"Unknown rocket choice: {choice}");
                 return;
         }
 
         // find its prefab
         var entry = rocketMappings.FirstOrDefault(e => e.rocketName == choice);
-        if (entry.rocketPrefab == null)
-        {
-            Debug.LogError($"No prefab assigned for rocketName '{choice}' in your Inspector!");
-            return;
-        }
         
         // instantiate at the spawn point
         GameObject rocketInstance = Instantiate(

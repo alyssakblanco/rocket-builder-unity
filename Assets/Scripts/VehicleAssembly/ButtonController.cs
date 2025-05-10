@@ -92,8 +92,6 @@ namespace VehicleAssembly
 
         void UpdateGroupVisuals(Button[] buttons, int activeIndex)
         {
-            Debug.Log("buttons: " + buttons);
-            Debug.Log("activeIndex: " + activeIndex);
             for (int i = 0; i < buttons.Length; i++)
             {
                 var img = buttons[i].GetComponent<Image>();

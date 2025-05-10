@@ -8,7 +8,6 @@ public class SceneNavigation : MonoBehaviour
         if(sceneName == "edit_build"){
             GameData.keepCurrentSelections = true;
             sceneName = "vehicle_assembly";
-            Debug.Log("hello"  + GameData.keepCurrentSelections);
         }
         SceneManager.LoadScene(sceneName);
     }

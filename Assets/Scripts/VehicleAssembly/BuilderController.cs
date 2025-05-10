@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 using System.Collections; 
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -63,7 +64,6 @@ public class BuilderController : MonoBehaviour
 
     private float cameraMoveSpeed = 50f;
 
-    private bool isPayload = false;
     // gimbal animation
     private bool gimbalShouldSwing = false;
     public float swingSpeed = 50f;
@@ -88,10 +88,20 @@ public class BuilderController : MonoBehaviour
     public TextMeshProUGUI controlDesc;
     public TextMeshProUGUI stagesDesc;
 
+    [Header("Payload Fairing Settings")]
+    public bool isPayload = false;                  // toggle on when you want the fairings to move
+    public float payloadSwingSpeed = 1f;    // how fast they oscillate
+    public float payloadSeparation = 0.5f;  // max offset on each side
+
+    private float payloadTimer = 0f;
+    private Vector3 half1StartPos;
+    private Vector3 half2StartPos;
+    private Transform fairingHalf1;        // found at runtime
+    private Transform fairingHalf2;        // found at runtime
+
     void Start()
     {
         if(!GameData.keepCurrentSelections){
-            Debug.Log("goodbye" + GameData.keepCurrentSelections);
             GameData.currentBuild[BuilderController.RocketPart.Stage]      = "1";
             GameData.currentBuild[BuilderController.RocketPart.Nose]       = "ogive";
             GameData.currentBuild[BuilderController.RocketPart.Propellant] = "solid";
@@ -103,22 +113,16 @@ public class BuilderController : MonoBehaviour
         // Spawn bottom stage
         bottomStage = bottomStageInstance;
         Transform bottomAnchor = bottomStage.transform.Find("anchor");
-        if (bottomAnchor == null)
-        {
-            Debug.LogError("Could not find an 'anchor' child under bottomStage!");
-            return;
-        }
 
         // Spawn the nose according to the saved selection
         string noseSel = GameData.currentBuild[BuilderController.RocketPart.Nose];
-        Debug.Log("GameData.currentBuild[BuilderController.RocketPart.Nose]" + GameData.currentBuild[BuilderController.RocketPart.Nose]);
         int noseIdx;
         switch (noseSel)
         {
             case "ogive":   noseIdx = 0; break;
             case "blunt":   noseIdx = 1; break;
             case "payload": noseIdx = 2; break;
-            default:        noseIdx = 0; Debug.LogWarning($"Unknown nose 1 '{noseSel}'"); break;
+            default:        noseIdx = 0; break;
         }
         nose = Instantiate(
             nosePrefabs[noseIdx],
@@ -147,6 +151,29 @@ public class BuilderController : MonoBehaviour
             swingTimer += Time.deltaTime * swingSpeed;
             float z = Mathf.Sin(swingTimer) * swingAngle;
             gimbalPrefab.transform.localEulerAngles  = new Vector3(0f, 0f, z);
+        }
+
+        Debug.Log("isPayload" + isPayload);
+        if (isPayload)
+        {
+            Debug.Log("here");
+            if (fairingHalf1 != null && fairingHalf2 != null)
+            {
+                Debug.Log("here 2");
+                // On first valid find, cache their starting positions
+                if (payloadTimer == 0f)
+                {
+                    Debug.Log("here 3");
+                    half1StartPos = fairingHalf1.localPosition;
+                    half2StartPos = fairingHalf2.localPosition;
+                }
+
+                payloadTimer += Time.deltaTime * payloadSwingSpeed;
+                float xOffset = Mathf.Sin(payloadTimer) * payloadSeparation;
+
+                fairingHalf1.localPosition = half1StartPos + Vector3.left  * xOffset;
+                fairingHalf2.localPosition = half2StartPos + Vector3.right * xOffset;
+            }
         }
     }
 
@@ -239,7 +266,6 @@ public class BuilderController : MonoBehaviour
             idx = 2;
             break;
         default:
-            Debug.LogWarning($"Unknown nose 2 “{sel}”");
             idx = 0;
             break;
         }
@@ -258,6 +284,15 @@ public class BuilderController : MonoBehaviour
         nose.transform.SetParent(transform, true);  
 
         if(sel == "payload"){
+            var all = transform.GetComponentsInChildren<Transform>(includeInactive: true);
+            fairingHalf1 = all.FirstOrDefault(t => t.name == "fairing_half_l");
+            fairingHalf2 = all.FirstOrDefault(t => t.name == "fairing_half_r");
+
+            if (fairingHalf1 == null || fairingHalf2 == null)
+                Debug.LogWarning("Could not locate one or both fairing halves in the scene!");
+        }
+
+        if(sel == "payload"){
             isPayload = true;
         }else{
            isPayload = false; 
@@ -269,11 +304,6 @@ public class BuilderController : MonoBehaviour
     private void UpdatePropellant(string selection)
     {
         UpdateContent("propellant", selection);
-        if (selection != "solid" && selection != "liquid")
-        {
-            Debug.LogError($"Invalid propellant selection: {selection}");
-            return;
-        }
         GameData.currentBuild[BuilderController.RocketPart.Propellant] = selection;
         
         // Update the propellant image
@@ -287,10 +317,6 @@ public class BuilderController : MonoBehaviour
             {
                 propellantImage.sprite = liquidPropellantSprite;
             }
-        }
-        else
-        {
-            Debug.LogWarning("Propellant image is not assigned.");
         }
 
         SetCostAndWeight();
@@ -310,7 +336,6 @@ public class BuilderController : MonoBehaviour
 
         if(norm == "gimbal"){
             selection = norm;
-            Debug.Log("selection " + selection);
         }
 
         UpdateContent("control", selection);
@@ -339,6 +364,8 @@ public class BuilderController : MonoBehaviour
         Transform top    = GameObject.FindWithTag("TopStage")?.transform;
         Transform nose   = GameObject.FindWithTag("NoseCone")?.transform;
 
+        gimbalPrefab.transform.localEulerAngles  = new Vector3(0f, 0f, 0f);
+
         var rocket = new GameObject("Rocket"){ tag = "Rocket" };
         bottom.SetParent(rocket.transform, true);
         if (middle != null) middle.SetParent(rocket.transform, true);
@@ -357,7 +384,6 @@ public class BuilderController : MonoBehaviour
 
     // UI Control
     public void UpdateContent(string section, string sel){
-        Debug.Log("text section " + section);
         if(section == "nose"){
             if(sel == "ogive"){
                 noseTitle.text = "Ogive";
@@ -388,7 +414,6 @@ public class BuilderController : MonoBehaviour
             }
         }
         if(section == "control"){
-            Debug.Log("text setter " + sel);
             if(sel == "fins"){
                 controlTitle.text = "Movable Fins";
                 controlHeader.text = "Movable Fins";
@@ -475,6 +500,7 @@ public class BuilderController : MonoBehaviour
         }
 
         cost = Mathf.Ceil(cost/2);
+        GameData.currentCost = cost;
         for (int i = 0; i < money.Length; i++)
         {
             var img = money[i];
@@ -482,6 +508,7 @@ public class BuilderController : MonoBehaviour
         }
 
         weight = Mathf.Ceil(weight/2);
+        GameData.currentWeight = weight;
         for (int i = 0; i < anvil.Length; i++)
         {
             var img = anvil[i];
