@@ -44,7 +44,7 @@ public class RG_ButtonNav : MonoBehaviour
 <b>Number of stages:</b> 1
 
 <b>Fun facts:</b>
-• The V2 rocket also became the first artificial object to travel into space by crossing the Kármán line (edge of space)
+• The V2 rocket was the <u>first artificial object to travel into space</u>!
 
 • Developed during the Second World War as the world’s first long-range ballistic missile.",
                 cameraPosition = new Vector3(-97.1f, 7.2f, 62.8f)
@@ -60,7 +60,7 @@ public class RG_ButtonNav : MonoBehaviour
 <b>Used for:</b> Carry cargo into Earth orbit and beyond
 
 <b>Fun facts:</b>
-• Composed of three reusable Falcon 9 nine-engine cores together generating more than 5 million pounds of thrust at liftoff, equal to approximately eighteen 747 aircraft!
+• Composed of three reusable Falcon 9 nine-engine cores together, generating more than 5 million pounds of thrust at liftoff, equal to approximately <b>18 airplanes</b>!
 
 • Falcon Heavy is called a ""2.5-stage rocket"" because its side boosters drop off first while the center core keeps firing, making it feel like a bonus half stage before the second stage takes over.",
                 cameraPosition = new Vector3(37.7f, 38.4f, 119.3f)
@@ -76,9 +76,9 @@ public class RG_ButtonNav : MonoBehaviour
 <b>Mission:</b> Reliable and safe transport of people and payloads into Earth orbit and beyond
 
 <b>Fun facts:</b>
-• The world’s first orbital class reusable rocket.
+• The world’s first <u>reusable rocket</u>!
 
-• The first (booster) stage carries the second stage and payload to a predetermined speed and altitude, after which the second stage accelerates the payload to its target orbit. The booster is capable of landing vertically to facilitate reuse.",
+• The first stage carries the second stage and payload to the target speed and altitude, after which the second stage accelerates the payload to its target orbit. The first stage booster is capable of landing vertically so it can be reused.",
                 cameraPosition = new Vector3(-4.3f, 38.4f, 119.3f)
             },
             new RocketInfo
@@ -92,7 +92,7 @@ public class RG_ButtonNav : MonoBehaviour
 <b>Mission:</b> Apollo Program – human exploration of the Moon
 
 <b>Fun facts:</b>
-• The only launch vehicle to have carried humans beyond low Earth orbit (LEO)
+• The <b>only</b> launch vehicle to have carried humans beyond low Earth orbit (LEO)!
 
 • Used for nine crewed flights to the Moon and to launch Skylab (the first American space station).",
                 cameraPosition = new Vector3(-89.7f, 59.5f, 163.7f)
@@ -126,7 +126,7 @@ public class RG_ButtonNav : MonoBehaviour
         bodyTextUI.text = rocket.body;
 
         // 2) wait until camera has moved into position
-        yield return StartCoroutine(MoveCamera(rocket.cameraPosition, 50));
+        yield return StartCoroutine(MoveCamera(rocket.cameraPosition, 100));
 
         // 3) only now activate the canvas (once!)
         if (!mainCanvas.activeSelf)

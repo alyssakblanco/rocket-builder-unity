@@ -6,7 +6,7 @@ using TMPro;
 public class LaunchControl : MonoBehaviour
 {
     [Header("Flight Settings")]
-    public float OrbitalAltitude = 1000f;
+    private float OrbitalAltitude = 1000f;
     public float AscentSpeed = 10f;
     public Vector3 InitialTilt = Vector3.zero;
     public Gradient BackgroundGradient;
@@ -17,6 +17,7 @@ public class LaunchControl : MonoBehaviour
     public GameObject GroundSet;
     public GameObject LaunchCanvas;
     public TextMeshProUGUI HeightText;
+    public GameObject heightIndicator;
     public GameObject InflightInfo;
     public GameObject MissionSuccess;
     public GameObject MissionFail;
@@ -35,7 +36,7 @@ public class LaunchControl : MonoBehaviour
     private bool _activated500;
 
     private const float HeightOffset = 73f;
-    private const float Threshold500 = 800f;
+    private const float Threshold500 = 200f;
     private GameObject Thrusters;
 
     private void Awake()
@@ -61,7 +62,7 @@ public class LaunchControl : MonoBehaviour
     private void Update()
     {
         float currentHeight = transform.position.y - HeightOffset;
-        HeightText.text = $"{currentHeight:F0} m";
+        HeightText.text = $"{currentHeight/2f:F0} km";
     }
 
     public void SetupLaunch()
@@ -238,6 +239,7 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator EndSequence()
     {
+        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(829f, 490f, 0f), 1f));
         if(GameData.missionStatus){
             MissionSuccess.SetActive(true);
         }else{
