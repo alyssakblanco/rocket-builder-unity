@@ -6,8 +6,8 @@ using TMPro;
 public class LaunchControl : MonoBehaviour
 {
     [Header("Flight Settings")]
-    private float OrbitalAltitude = 1000f;
-    public float AscentSpeed = 10f;
+    private float OrbitalAltitude = 50073f;
+    private float AscentSpeed = 1f;
     public Vector3 InitialTilt = Vector3.zero;
     public Gradient BackgroundGradient;
     public Color SkyColor;
@@ -33,10 +33,10 @@ public class LaunchControl : MonoBehaviour
     private Camera _camera;
     private GameObject _rocket;
     private bool _reachedOrbitalAltitude;
-    private bool _activated500;
+    private bool hasReachedSpace;
 
     private const float HeightOffset = 73f;
-    private const float Threshold500 = 200f;
+    private const float KarmanLine = 10073f;
     private GameObject Thrusters;
 
     private void Awake()
@@ -62,7 +62,7 @@ public class LaunchControl : MonoBehaviour
     private void Update()
     {
         float currentHeight = transform.position.y - HeightOffset;
-        HeightText.text = $"{currentHeight/2f:F0} km";
+        HeightText.text = $"{(currentHeight * 10f):F0} m";
     }
 
     public void SetupLaunch()
@@ -75,7 +75,7 @@ public class LaunchControl : MonoBehaviour
     public void StartLaunch()
     {
         _reachedOrbitalAltitude = false;
-        _activated500 = false;
+        hasReachedSpace = false;
 
         StartCoroutine(RotateTransform(MainCamera.transform, InitialTilt, 5f));
         StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(69f, -73f, 0f), 5f));
@@ -91,24 +91,29 @@ public class LaunchControl : MonoBehaviour
             if (!_reachedOrbitalAltitude)
             {
                 transform.Translate(Vector3.up * AscentSpeed * Time.deltaTime, Space.Self);
-                UpdateSkyGradient(altitude);
             }
 
-            if (!_activated500 && altitude >= Threshold500)
-            {
-                _activated500 = true;
+            if(!hasReachedSpace){
+                AscentSpeed += 0.5f;
+                UpdateSkyGradient(altitude);
+            }
+            if(altitude >= KarmanLine - 2000){
                 if(!GameData.makesItToSpace){
                     StopAllCoroutines();
                     Thrusters.SetActive(false);
-                    StartCoroutine(EndSequence());
-                }
+                    StartCoroutine(EndSequence(true));
+                } 
             }
+            if(altitude >= KarmanLine){
+                hasReachedSpace = true;
+                GroundSet.SetActive(false);
+                _camera.clearFlags = CameraClearFlags.Skybox;
+            }
+
 
             if (!_reachedOrbitalAltitude && altitude >= OrbitalAltitude)
             {
                 _reachedOrbitalAltitude = true;
-                GroundSet.SetActive(false);
-                _camera.clearFlags = CameraClearFlags.Skybox;
                 StartCoroutine(HorizontalShift());
                 yield break;
             }
@@ -119,7 +124,7 @@ public class LaunchControl : MonoBehaviour
 
     private void UpdateSkyGradient(float height)
     {
-        float t = Mathf.Clamp01(height / OrbitalAltitude);
+        float t = Mathf.Clamp01(height / KarmanLine);
         _camera.backgroundColor = BackgroundGradient.Evaluate(t);
     }
 
@@ -226,7 +231,8 @@ public class LaunchControl : MonoBehaviour
         // yield return new WaitForSeconds(2f);
         // earth 
         Earth.SetActive(true);
-        StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f ,-1598f ,-535f), 100f));
+        StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f,47468f,-535f), 100f));
+        // StartCoroutine(MoveToPosition(LaunchView.transform, new Vector3(251f ,-1598f ,-535f), 100f));
         // rocket
         yield return StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 2f));
         // kill engines
@@ -234,18 +240,35 @@ public class LaunchControl : MonoBehaviour
         // camera
         StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-120f, 111f, -88f), 10f));
         yield return StartCoroutine(RotateToEuler(MainCamera.transform, new Vector3(30f, 0f, 0f), 5f));
-        StartCoroutine(EndSequence());
+        StartCoroutine(EndSequence(false));
     }
 
-    private IEnumerator EndSequence()
+    private IEnumerator EndSequence(bool failsBeforeSpace)
     {
-        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(829f, 490f, 0f), 1f));
+        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(780f, 490f, 0f), 1f));
+        
         if(GameData.missionStatus){
             MissionSuccess.SetActive(true);
         }else{
-           MissionFail.SetActive(true); 
+            MissionFail.SetActive(true);
+            if(failsBeforeSpace){
+                StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 10f));
+                StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-16f, -102f, 17f), 10f));
+            }
         }
 
         yield break;
     }
+
+    //
+    // INFLIGHT FACTS
+    //
+    public static readonly string[] randomFacts = new[]
+    {
+       "The Kármán line, 100 km above Earth, is where space begins!",
+       "Low Earth Orbit (LEO) is from about 160 km to 2,000 km up; this is where most satellites (and the ISS) fly.",
+       "The International Space Station (ISS) orbits at roughly 420 km high and goes all the way around Earth in about 90 minutes.",
+       "The Saturn V rocket stood 110 m tall and is still the biggest rocket ever flown.",
+       "Most rockets reach their target Low Earth Orbit (LEO) in about 10 minutes!"
+    };
 }
