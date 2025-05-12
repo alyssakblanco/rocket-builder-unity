@@ -561,7 +561,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 126909826}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1701233018}
+        m_TargetAssemblyTypeName: SceneNavigation, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: mission_select
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &126909826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1017,7 +1029,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 197373535}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1701233018}
+        m_TargetAssemblyTypeName: SceneNavigation, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: edit_build
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &197373535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1581,7 +1605,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 261489573}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1701233018}
+        m_TargetAssemblyTypeName: SceneNavigation, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: edit_build
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &261489573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5279,7 +5315,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.5, y: 3}
+  m_AnchoredPosition: {x: -58.6, y: 6.1}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &784452948
@@ -5329,8 +5365,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5367,7 +5403,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 91.17749, y: 0, z: -115.04883, w: 0}
+  m_margin: {x: 91.17749, y: 0, z: -3.0344162, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -8093,7 +8129,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 489}
+  m_AnchoredPosition: {x: 60, y: 190}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1258070067
@@ -9545,7 +9581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -9611,6 +9647,7 @@ GameObject:
   - component: {fileID: 1410490233}
   - component: {fileID: 1410490232}
   - component: {fileID: 1410490231}
+  - component: {fileID: 1410490234}
   m_Layer: 0
   m_Name: LaunchView
   m_TagString: Untagged
@@ -9787,6 +9824,25 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1410490234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410490229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eec94cac8d167414cbb6f27192b1eb22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiCanvas: {fileID: 1397262161}
+  backgroundSprite: {fileID: 21300000, guid: 31b057c53d7cff544abe02deacd7a861, type: 3}
+  textFont: {fileID: 11400000, guid: 8969289229269634d8336eab9b541ac8, type: 2}
+  fontSize: 12
+  panelSize: {x: 200, y: 100}
+  slideDuration: 15
+  excludeCenterWidth: 500
 --- !u!1 &1411143483
 GameObject:
   m_ObjectHideFlags: 0
@@ -10832,8 +10888,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -10870,7 +10926,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 74.06322, w: 0}
+  m_margin: {x: 0, y: 0, z: 126.54016, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -11297,7 +11353,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1586717446}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1701233018}
+        m_TargetAssemblyTypeName: SceneNavigation, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: mission_select
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1586717446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12083,6 +12151,7 @@ GameObject:
   - component: {fileID: 1701233015}
   - component: {fileID: 1701233016}
   - component: {fileID: 1701233017}
+  - component: {fileID: 1701233018}
   m_Layer: 0
   m_Name: RocketLoader
   m_TagString: Untagged
@@ -12163,6 +12232,18 @@ MonoBehaviour:
   - {fileID: 569858785}
   - {fileID: 1562714304}
   - {fileID: 701961527}
+--- !u!114 &1701233018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701233014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a6015d120dad404eb779d2864de2ab6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1707737083
 GameObject:
   m_ObjectHideFlags: 0

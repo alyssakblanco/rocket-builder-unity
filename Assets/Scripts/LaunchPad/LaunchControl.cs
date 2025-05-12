@@ -39,6 +39,11 @@ public class LaunchControl : MonoBehaviour
     private const float KarmanLine = 10073f;
     private GameObject Thrusters;
 
+    // inflight facts
+    private float fireInterval = 20f;
+    private float _nextFireTime = 0f;
+    private bool missionComplete = true;
+
     private void Awake()
     {
         _camera = MainCamera;
@@ -63,6 +68,12 @@ public class LaunchControl : MonoBehaviour
     {
         float currentHeight = transform.position.y - HeightOffset;
         HeightText.text = $"{(currentHeight * 10f):F0} m";
+
+        if (!missionComplete && (Time.time >= _nextFireTime))
+        {
+            _nextFireTime = Time.time + fireInterval;
+            GetComponent<RandomFactSlider>().ShowRandomFact();
+        }
     }
 
     public void SetupLaunch()
@@ -76,6 +87,7 @@ public class LaunchControl : MonoBehaviour
     {
         _reachedOrbitalAltitude = false;
         hasReachedSpace = false;
+        missionComplete = false;
 
         StartCoroutine(RotateTransform(MainCamera.transform, InitialTilt, 5f));
         StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(69f, -73f, 0f), 5f));
@@ -99,6 +111,7 @@ public class LaunchControl : MonoBehaviour
             }
             if(altitude >= KarmanLine - 2000){
                 if(!GameData.makesItToSpace){
+                    missionComplete = true;
                     StopAllCoroutines();
                     Thrusters.SetActive(false);
                     StartCoroutine(EndSequence(true));
@@ -227,6 +240,7 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator HorizontalShift()
     {
+        missionComplete = true;
         // hesitate at top
         // yield return new WaitForSeconds(2f);
         // earth 
@@ -245,7 +259,7 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator EndSequence(bool failsBeforeSpace)
     {
-        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(780f, 490f, 0f), 1f));
+        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(360f ,185f ,0f ), 1f));
         
         if(GameData.missionStatus){
             MissionSuccess.SetActive(true);
@@ -259,16 +273,4 @@ public class LaunchControl : MonoBehaviour
 
         yield break;
     }
-
-    //
-    // INFLIGHT FACTS
-    //
-    public static readonly string[] randomFacts = new[]
-    {
-       "The Kármán line, 100 km above Earth, is where space begins!",
-       "Low Earth Orbit (LEO) is from about 160 km to 2,000 km up; this is where most satellites (and the ISS) fly.",
-       "The International Space Station (ISS) orbits at roughly 420 km high and goes all the way around Earth in about 90 minutes.",
-       "The Saturn V rocket stood 110 m tall and is still the biggest rocket ever flown.",
-       "Most rockets reach their target Low Earth Orbit (LEO) in about 10 minutes!"
-    };
 }
