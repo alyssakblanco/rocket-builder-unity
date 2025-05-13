@@ -382,6 +382,10 @@ public class BuilderController : MonoBehaviour
         Transform nose   = GameObject.FindWithTag("NoseCone")?.transform;
 
         gimbalPrefab.transform.localEulerAngles  = new Vector3(0f, 0f, 0f);
+        if (fairingHalf2 != null)
+        {
+            fairingHalf2.localPosition = originalPosition; 
+        }
 
         var rocket = new GameObject("Rocket"){ tag = "Rocket" };
         bottom.SetParent(rocket.transform, true);

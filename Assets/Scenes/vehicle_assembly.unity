@@ -8475,7 +8475,7 @@ MonoBehaviour:
   stagesDesc: {fileID: 326400296}
   payloadSwingSpeed: 1
   payloadSeparation: 0.5
-  offsetPosition: {x: 0.32507324, y: 736, z: -70}
+  offsetPosition: {x: 0.3250732, y: 736, z: -70}
   moveSpeed: 200
   activeColor:
     serializedVersion: 2
