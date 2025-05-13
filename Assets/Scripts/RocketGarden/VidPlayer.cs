@@ -17,7 +17,7 @@ public class VidPlayer : MonoBehaviour
     }
 
     public void ChangeVideoSource(string videoFileName){
-        string videoPath = System.IO.Path.Combine(Application.streamingAssetsPath, videoFileName);
+        string videoPath = $"https://designlearnlaunch.com/StreamingAssets/{videoFileName}";
         videoPlayer.url = videoPath;
         videoPlayer.Play();
     }

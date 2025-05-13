@@ -8,6 +8,12 @@ public class LaunchSetup : MonoBehaviour
 {
     public TextMeshProUGUI missionTitle;
     public TextMeshProUGUI missionDesc;
+
+    public TextMeshProUGUI missionSuccessTitle;
+    public TextMeshProUGUI missionSuccessDesc;
+
+    public TextMeshProUGUI missionFailTitle;
+    public TextMeshProUGUI missionFailDesc;
     
     public TextMeshProUGUI currentNose;
     public TextMeshProUGUI currentPropellant;
@@ -27,6 +33,12 @@ public class LaunchSetup : MonoBehaviour
     public void SetBuildInfo(){
         missionTitle.text = GameData.Missions[GameData.selectedMission].title;
         missionDesc.text  = GameData.Missions[GameData.selectedMission].desc;
+
+        missionSuccessTitle.text = GameData.Missions[GameData.selectedMission].title;
+        missionSuccessDesc.text  = GameData.Missions[GameData.selectedMission].desc;
+
+        missionFailTitle.text = GameData.Missions[GameData.selectedMission].title;
+        missionFailDesc.text  = GameData.Missions[GameData.selectedMission].desc;
 
         string control = GameData.currentBuild[BuilderController.RocketPart.Control];
         if(control == "fins"){

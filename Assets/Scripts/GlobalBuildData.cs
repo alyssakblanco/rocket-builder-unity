@@ -37,21 +37,21 @@ public static class GameData
     public static void SetMissionStatus(){
         // sat deployment
         if(selectedMission == 0){
-            if(currentBuild[BuilderController.RocketPart.Nose] != "payload"){
-                missionStatus = false;
-                makesItToSpace = true;
-                hint = "You dont have the right nose cone for this mission. Which nose cone allows you to deploy a satellite?";
-            }else if(currentBuild[BuilderController.RocketPart.Stage] == "1"){
+            if(currentBuild[BuilderController.RocketPart.Stage] == "1"){
                 missionStatus = false;
                 makesItToSpace = false;
                 hint = "Your single stage rocket isn't powerful enough to make it into space with your satellite.";
+            }else if(currentBuild[BuilderController.RocketPart.Nose] != "payload"){
+                missionStatus = false;
+                makesItToSpace = true;
+                hint = "You dont have the right nose cone for this mission. Which nose cone allows you to deploy a satellite?";
             }else{
                 missionStatus = true;
                 makesItToSpace = true;
                 if(currentBuild[BuilderController.RocketPart.Control] == "fins"){
                     hint = "Your rocket made it into space but the fins were no help in space so your satillite didnt deploy at the right place. What kind of control allows you to control your rocket isn space?";
                 }
-                hint = "Congrats you succeeded!";
+                hint = "You're on your way to being a rocket scientist!";
             }
         }
 
@@ -68,7 +68,7 @@ public static class GameData
                 missionStatus = false;
                 if(currentBuild[BuilderController.RocketPart.Stage] == "2"){makesItToSpace = true;}else{makesItToSpace = false;}
                 hint = "Your rocket isn't powerful enough to make it to another planet. What number of stages is best for long term flight?";
-            } else if (currentBuild[BuilderController.RocketPart.Control] != "gimbal"){
+            } else if (currentBuild[BuilderController.RocketPart.Control] == "fins"){
                 missionStatus = false;
                 makesItToSpace = true;
                 hint = "Your fins dont work in space and you can't steer your rocket to the right planet!";
@@ -82,7 +82,7 @@ public static class GameData
                 if(currentBuild[BuilderController.RocketPart.Nose] != "payload"){
                     hint = "Your rocket is on its way! But which nose cone will allow you to deploy isntruments for research at the target planet?";
                 }
-                hint = "Congrats you're on your way to another world!";
+                hint = "Congrats, after one slingshot around the globe you'll be on your way to another world!";
             }
         }
     }

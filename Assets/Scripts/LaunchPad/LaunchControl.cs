@@ -108,10 +108,17 @@ public class LaunchControl : MonoBehaviour
             if(!hasReachedSpace){
                 AscentSpeed += 0.5f;
                 UpdateSkyGradient(altitude);
+            } else {
+                AscentSpeed += 0.25f;
+            }
+
+            if(altitude >= KarmanLine - 3000){
+                if(!GameData.makesItToSpace){
+                    missionComplete = true;
+                }
             }
             if(altitude >= KarmanLine - 2000){
                 if(!GameData.makesItToSpace){
-                    missionComplete = true;
                     StopAllCoroutines();
                     Thrusters.SetActive(false);
                     StartCoroutine(EndSequence(true));
@@ -259,10 +266,15 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator EndSequence(bool failsBeforeSpace)
     {
+        Debug.Log("failsBeforeSpace " + failsBeforeSpace);
         StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(360f ,185f ,0f ), 1f));
         
         if(GameData.missionStatus){
             MissionSuccess.SetActive(true);
+            if(failsBeforeSpace){
+                StartCoroutine(RotateToEuler(_rocket.transform, new Vector3(13f, 225f, 272f), 10f));
+                StartCoroutine(MoveToLocalPosition(MainCamera.transform, new Vector3(-16f, -102f, 17f), 10f));
+            }
         }else{
             MissionFail.SetActive(true);
             if(failsBeforeSpace){
