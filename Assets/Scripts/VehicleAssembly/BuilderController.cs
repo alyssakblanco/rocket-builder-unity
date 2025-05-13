@@ -89,15 +89,22 @@ public class BuilderController : MonoBehaviour
     public TextMeshProUGUI stagesDesc;
 
     [Header("Payload Fairing Settings")]
-    public bool isPayload = false;                  // toggle on when you want the fairings to move
+    private bool isPayload = false;                  // toggle on when you want the fairings to move
     public float payloadSwingSpeed = 1f;    // how fast they oscillate
-    public float payloadSeparation = 0.5f;  // max offset on each side
+    public float payloadSeparation = 50f;  // max offset on each side
 
     private float payloadTimer = 0f;
     private Vector3 half1StartPos;
     private Vector3 half2StartPos;
     private Transform fairingHalf1;        // found at runtime
     private Transform fairingHalf2;        // found at runtime
+    public Vector3 offsetPosition; // Set in Inspector or code
+    public float moveSpeed = 1f;
+
+    private Vector3 originalPosition;
+    private Vector3 targetPosition;
+    private bool movingToTarget = true;
+    private bool isMoving = false;
 
     void Start()
     {
@@ -153,28 +160,36 @@ public class BuilderController : MonoBehaviour
             gimbalPrefab.transform.localEulerAngles  = new Vector3(0f, 0f, z);
         }
 
-        Debug.Log("isPayload" + isPayload);
-        if (isPayload)
+        if (isPayload && !isMoving)
         {
-            Debug.Log("here");
-            if (fairingHalf1 != null && fairingHalf2 != null)
-            {
-                Debug.Log("here 2");
-                // On first valid find, cache their starting positions
-                if (payloadTimer == 0f)
-                {
-                    Debug.Log("here 3");
-                    half1StartPos = fairingHalf1.localPosition;
-                    half2StartPos = fairingHalf2.localPosition;
-                }
-
-                payloadTimer += Time.deltaTime * payloadSwingSpeed;
-                float xOffset = Mathf.Sin(payloadTimer) * payloadSeparation;
-
-                fairingHalf1.localPosition = half1StartPos + Vector3.left  * xOffset;
-                fairingHalf2.localPosition = half2StartPos + Vector3.right * xOffset;
-            }
+            StartCoroutine(MoveFairing());
         }
+    }
+
+    private IEnumerator MoveFairing()
+    {
+        isMoving = true;
+
+        Vector3 destination = movingToTarget ? targetPosition : originalPosition;
+
+        while (fairingHalf2 != null && Vector3.Distance(fairingHalf2.localPosition, destination) > 0.01f)
+        {
+            fairingHalf2.localPosition = Vector3.MoveTowards(
+                fairingHalf2.localPosition,
+                destination,
+                moveSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+
+        if (fairingHalf2 != null)
+        {
+            fairingHalf2.localPosition = destination;
+        }
+
+        yield return new WaitForSeconds(2f);
+        movingToTarget = !movingToTarget;
+        isMoving = false;
     }
 
     // ——— PUBLIC UI CALLS ———
@@ -251,6 +266,11 @@ public class BuilderController : MonoBehaviour
     private void UpdateNose(string rawSel)
     {
         var sel = rawSel.Trim().ToLowerInvariant();
+        if(sel == "payload"){
+            isPayload = true;
+        }else{
+           isPayload = false; 
+        }
         UpdateContent("nose", sel);
         GameData.currentBuild[BuilderController.RocketPart.Nose] = sel;
         int idx;
@@ -287,15 +307,12 @@ public class BuilderController : MonoBehaviour
             var all = transform.GetComponentsInChildren<Transform>(includeInactive: true);
             fairingHalf1 = all.FirstOrDefault(t => t.name == "fairing_half_l");
             fairingHalf2 = all.FirstOrDefault(t => t.name == "fairing_half_r");
+            
+            originalPosition = fairingHalf2.localPosition;
+            targetPosition = originalPosition + offsetPosition;
 
             if (fairingHalf1 == null || fairingHalf2 == null)
                 Debug.LogWarning("Could not locate one or both fairing halves in the scene!");
-        }
-
-        if(sel == "payload"){
-            isPayload = true;
-        }else{
-           isPayload = false; 
         }
 
         SetCostAndWeight();

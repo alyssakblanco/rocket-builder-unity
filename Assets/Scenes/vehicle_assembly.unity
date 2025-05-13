@@ -8473,9 +8473,10 @@ MonoBehaviour:
   propellantDesc: {fileID: 1360662536}
   controlDesc: {fileID: 1521418872}
   stagesDesc: {fileID: 326400296}
-  isPayload: 0
   payloadSwingSpeed: 1
   payloadSeparation: 0.5
+  offsetPosition: {x: 0.32507324, y: 736, z: -70}
+  moveSpeed: 200
   activeColor:
     serializedVersion: 2
     rgba: 4278229998
