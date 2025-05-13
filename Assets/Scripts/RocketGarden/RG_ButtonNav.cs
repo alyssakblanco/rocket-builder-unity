@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections; 
 using System.Collections.Generic; 
@@ -11,6 +12,7 @@ public class RocketInfo
     public string name;
     public string body;
     public Vector3 cameraPosition;
+    public string videoFile;
 }
 
 public class RG_ButtonNav : MonoBehaviour
@@ -27,6 +29,15 @@ public class RG_ButtonNav : MonoBehaviour
 
     public Camera mainCamera; // Assign in Inspector
     public float cameraMoveSpeed; // Adjustable speed
+
+    // info / photo switch
+    public TextMeshProUGUI actionButtonTxt;
+    public GameObject info_panel;
+    public GameObject v2_photos;
+    public GameObject saturn_photos;
+    public GameObject f9_photos;
+    public GameObject fheavy_photos;
+    private GameObject currentMediaPanel;
 
     private string rocketName;
 
@@ -47,7 +58,8 @@ public class RG_ButtonNav : MonoBehaviour
 • The V2 rocket was the <u>first artificial object to travel into space</u>!
 
 • Developed during the Second World War as the world’s first long-range ballistic missile.",
-                cameraPosition = new Vector3(-97.1f, 7.2f, 62.8f)
+                cameraPosition = new Vector3(-97.1f, 7.2f, 62.8f),
+                videoFile = "v2_demo.mp4"
             },
             new RocketInfo
             {
@@ -63,7 +75,8 @@ public class RG_ButtonNav : MonoBehaviour
 • Composed of three reusable Falcon 9 nine-engine cores together, generating more than 5 million pounds of thrust at liftoff, equal to approximately <b>18 airplanes</b>!
 
 • Falcon Heavy is called a ""2.5-stage rocket"" because its side boosters drop off first while the center core keeps firing, making it feel like a bonus half stage before the second stage takes over.",
-                cameraPosition = new Vector3(37.7f, 38.4f, 119.3f)
+                cameraPosition = new Vector3(37.7f, 38.4f, 119.3f),
+                videoFile = "falconheavy_demo.mp4"
             },
             new RocketInfo
             {
@@ -79,7 +92,8 @@ public class RG_ButtonNav : MonoBehaviour
 • The world’s first <u>reusable rocket</u>!
 
 • The first stage carries the second stage and payload to the target speed and altitude, after which the second stage accelerates the payload to its target orbit. The first stage booster is capable of landing vertically so it can be reused.",
-                cameraPosition = new Vector3(-4.3f, 38.4f, 119.3f)
+                cameraPosition = new Vector3(-4.3f, 38.4f, 119.3f),
+                videoFile = "falcon9_demo.mp4"
             },
             new RocketInfo
             {
@@ -95,7 +109,8 @@ public class RG_ButtonNav : MonoBehaviour
 • The <b>only</b> launch vehicle to have carried humans beyond low Earth orbit (LEO)!
 
 • Used for nine crewed flights to the Moon and to launch Skylab (the first American space station).",
-                cameraPosition = new Vector3(-89.7f, 59.5f, 163.7f)
+                cameraPosition = new Vector3(-89.7f, 59.5f, 163.7f),
+                videoFile = "saturn_demo.mp4"
             }
         };
 
@@ -116,6 +131,8 @@ public class RG_ButtonNav : MonoBehaviour
 
     private IEnumerator InitialRoutine()
     {
+        var rocket = rocketInfoDict[rocketToShow];
+        GetComponent<VidPlayer>().ChangeVideoSource(rocket.videoFile);
         yield return StartCoroutine(InitalSceneSetup(rocketInfoDict[rocketToShow]));
     }
     
@@ -140,6 +157,15 @@ public class RG_ButtonNav : MonoBehaviour
             var rocket = rocketInfoDict[rocketToShow];
             nameTextUI.text = rocket.name;
             bodyTextUI.text = rocket.body;
+            GetComponent<VidPlayer>().ChangeVideoSource(rocket.videoFile);
+            info_panel.SetActive(true);
+            v2_photos.SetActive(false);
+            saturn_photos.SetActive(false);
+            f9_photos.SetActive(false);
+            fheavy_photos.SetActive(false);
+            currentMediaPanel = null;
+
+            actionButtonTxt.text = "See It in Action";
 
             // Move camera smoothly
             StopAllCoroutines(); // Stop any existing movement coroutine
@@ -148,6 +174,35 @@ public class RG_ButtonNav : MonoBehaviour
         if (!mainCanvas.activeSelf){
             mainCanvas.SetActive(true);
         }
+    }
+
+    public void ToggleMedia(){
+        bool newState = !info_panel.activeSelf;
+        info_panel.SetActive(newState);
+
+        if (newState) {
+            currentMediaPanel.SetActive(false);
+            actionButtonTxt.text = "See It in Action";
+        } else {
+            actionButtonTxt.text = "Learn the Facts";
+
+            var rocket = rocketInfoDict[rocketToShow];
+            if (rocket.name == "V-2") {
+                v2_photos.SetActive(true);
+                currentMediaPanel = v2_photos;
+            } else if (rocket.name == "Saturn V") {
+                saturn_photos.SetActive(true);
+                currentMediaPanel = saturn_photos;
+            } else if (rocket.name == "Falcon 9") {
+                f9_photos.SetActive(true);
+                currentMediaPanel = f9_photos;
+            } else if (rocket.name == "Falcon Heavy") {
+                fheavy_photos.SetActive(true);
+                currentMediaPanel = fheavy_photos;
+            }
+        }
+
+        GetComponent<VidPlayer>().PlayVideo();
     }
 
     IEnumerator MoveCamera(Vector3 targetPosition, float moveSpeed)

@@ -11,7 +11,17 @@ public class RandomFactSlider : MonoBehaviour
        "Low Earth Orbit (LEO) is from about 160 km to 2,000 km up; this is where most satellites (and the ISS) fly.",
        "The International Space Station (ISS) orbits at roughly 420 km high and goes all the way around Earth in about 90 minutes.",
        "The Saturn V rocket stood 110 m tall and is still the biggest rocket ever flown.",
-       "Most rockets reach their target Low Earth Orbit (LEO) in about 10 minutes!"
+       "Most rockets reach their target Low Earth Orbit (LEO) in about 10 minutes!",
+       "To escape Earth’s gravity, a rocket must hit speeds over 28,000 km/h!",
+       "The Moon is about 384,000 km from Earth—almost 1,000 times farther than the ISS!",
+       "Astronauts experience ‘microgravity’—it feels like floating, but they’re actually falling!",
+       "Sound can’t travel in space because there’s no air to carry the vibrations.",
+       "Re-entry into Earth’s atmosphere heats spacecraft to over 1,600°C—hotter than lava!",
+       "The first human in space was Yuri Gagarin in 1961—he orbited Earth once in 108 minutes!",
+       "Earth’s atmosphere gets thinner with altitude—rockets need less lift the higher they go.",
+       "Most rocket launches happen near the equator to take advantage of Earth’s rotation.",
+       "The Hubble Space Telescope orbits at about 540 km—just above the ISS.",
+       "In space, astronauts see about 16 sunrises and sunsets every day!"
     };
 
     [Header("UI References")]
