@@ -278,7 +278,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Choose a Rocket
+  m_text: Explore Rocket Garden
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
   m_sharedMaterial: {fileID: 6830117976034122533, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
@@ -451,7 +451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Build Your Own
+  m_text: Build & Launch a Rocket
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
   m_sharedMaterial: {fileID: 6830117976034122533, guid: d36cb129deed8414894b9a3c72a239c8, type: 2}
