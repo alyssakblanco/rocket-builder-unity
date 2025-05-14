@@ -67,7 +67,7 @@ public class LaunchControl : MonoBehaviour
     private void Update()
     {
         float currentHeight = transform.position.y - HeightOffset;
-        HeightText.text = $"{(currentHeight * 10f):F0} m";
+        HeightText.text = $"{(currentHeight * 10f):N0} m";
 
         if (!missionComplete && (Time.time >= _nextFireTime))
         {
@@ -109,10 +109,10 @@ public class LaunchControl : MonoBehaviour
                 AscentSpeed += 0.5f;
                 UpdateSkyGradient(altitude);
             } else {
-                AscentSpeed += 0.25f;
+                AscentSpeed += 0.5f;
             }
 
-            if(altitude >= KarmanLine - 3000){
+            if(altitude >= KarmanLine - 5000){
                 if(!GameData.makesItToSpace){
                     missionComplete = true;
                 }
@@ -131,6 +131,10 @@ public class LaunchControl : MonoBehaviour
             }
 
 
+            if (!_reachedOrbitalAltitude && altitude >= OrbitalAltitude - 5000)
+            {
+                missionComplete = true;
+            }
             if (!_reachedOrbitalAltitude && altitude >= OrbitalAltitude)
             {
                 _reachedOrbitalAltitude = true;
@@ -266,7 +270,6 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator EndSequence(bool failsBeforeSpace)
     {
-        Debug.Log("failsBeforeSpace " + failsBeforeSpace);
         StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(360f ,185f ,0f ), 1f));
         
         if(GameData.missionStatus){

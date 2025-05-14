@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
+
 public class RandomFactSlider : MonoBehaviour
 {
-
     public static readonly string[] randomFacts = new[]
     {
        "The Kármán line, 100 km above Earth, is where space begins!",
@@ -24,6 +25,9 @@ public class RandomFactSlider : MonoBehaviour
        "In space, astronauts see about 16 sunrises and sunsets every day!"
     };
 
+    // Runtime list of facts not yet shown
+    private List<string> _unusedFacts;
+
     [Header("UI References")]
     public Canvas uiCanvas;
     public Sprite backgroundSprite;
@@ -37,18 +41,39 @@ public class RandomFactSlider : MonoBehaviour
     public float slideDuration;
     public float excludeCenterWidth;
 
+    void Awake()
+    {
+        // Initialize the unused-facts list
+        ResetFactPool();
+    }
+
+    /// <summary>
+    /// Call this to re-populate the pool once you've shown them all.
+    /// </summary>
+    private void ResetFactPool()
+    {
+        _unusedFacts = new List<string>(randomFacts);
+    }
 
     public void ShowRandomFact()
     {
-        if (randomFacts == null || randomFacts.Length == 0 || uiCanvas == null)
+        if (_unusedFacts == null || _unusedFacts.Count == 0 || uiCanvas == null)
             return;
         StartCoroutine(CreateAndSlideFact());
     }
 
     private IEnumerator CreateAndSlideFact()
     {
-        // 1) Pick a random fact
-        string fact = randomFacts[Random.Range(0, randomFacts.Length)];
+        // 1) Pick and remove a random fact from the unused pool
+        if (_unusedFacts.Count == 0)
+        {
+            // all shown—reset for next cycle
+            ResetFactPool();
+        }
+
+        int idx = Random.Range(0, _unusedFacts.Count);
+        string fact = _unusedFacts[idx];
+        _unusedFacts.RemoveAt(idx);
 
         // 2) Build the panel
         GameObject panel = new GameObject("FactPanel", typeof(RectTransform), typeof(Image));
@@ -93,11 +118,9 @@ public class RandomFactSlider : MonoBehaviour
         float leftWidth = leftMax - minX;
         float rightWidth = maxX - rightMin;
         float pick = Random.Range(0f, leftWidth + rightWidth);
-        float randomX;
-        if (pick < leftWidth)
-            randomX = Random.Range(minX, leftMax);
-        else
-            randomX = Random.Range(rightMin, maxX);
+        float randomX = (pick < leftWidth)
+            ? Random.Range(minX, leftMax)
+            : Random.Range(rightMin, maxX);
 
         float startY = canvasRect.rect.height * 0.5f + panelSize.y * 0.5f;
         float endY   = -startY;
