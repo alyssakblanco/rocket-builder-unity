@@ -270,7 +270,7 @@ public class LaunchControl : MonoBehaviour
 
     private IEnumerator EndSequence(bool failsBeforeSpace)
     {
-        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(360f ,185f ,0f ), 1f));
+        StartCoroutine(MoveToLocalPosition(heightIndicator.transform, new Vector3(351f ,190f ,0f ), 1f));
         
         if(GameData.missionStatus){
             MissionSuccess.SetActive(true);
